@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FOOTQ - تحدي كرة القدم</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--font-ar:'Cairo',sans-serif;--font-en:'Poppins',sans-serif;--transition:all .3s cubic-bezier(.4,0,.2,1);--radius:20px;--shadow:0 10px 30px rgba(0,0,0,.3);--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--info:#3b82f6}
+[data-theme="galaxy"]{--bg-primary:#0f0c29;--bg-secondary:#302b63;--bg-tertiary:#24243e;--text-primary:#fff;--text-secondary:#b8b8d4;--accent:#8b5cf6;--accent-glow:rgba(139,92,246,.5);--card-bg:rgba(255,255,255,.08);--border-color:rgba(255,255,255,.15)}
+[data-theme="green"]{--bg-primary:#064e3b;--bg-secondary:#065f46;--bg-tertiary:#047857;--text-primary:#fff;--text-secondary:#a7f3d0;--accent:#10b981;--accent-glow:rgba(16,185,129,.5);--card-bg:rgba(255,255,255,.1);--border-color:rgba(16,185,129,.4)}
+[data-theme="black"]{--bg-primary:#000;--bg-secondary:#1a1a1a;--bg-tertiary:#2d2d2d;--text-primary:#fff;--text-secondary:#a3a3a3;--accent:#f59e0b;--accent-glow:rgba(245,158,11,.5);--card-bg:rgba(255,255,255,.05);--border-color:rgba(255,255,255,.1)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font-ar);background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow-x:hidden;transition:var(--transition);position:relative}
+body[data-lang="en"]{font-family:var(--font-en);direction:ltr}
+[data-theme="galaxy"] body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at bottom,#1b2735 0%,#090a0f 100%);z-index:-1}
+#app{max-width:500px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative;background:var(--bg-primary)}
+.screen{display:none;flex-direction:column;flex:1;padding:20px;animation:fadeIn .4s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:10px}
+.coins-display{display:flex;align-items:center;gap:8px;background:var(--card-bg);backdrop-filter:blur(10px);padding:10px 16px;border-radius:50px;border:1px solid var(--border-color);font-weight:700;font-size:1.1rem;color:var(--warning)}
+.coins-display svg{width:26px;height:26px;fill:var(--warning);filter:drop-shadow(0 0 6px var(--accent-glow))}
+.icon-btn{background:var(--card-bg);backdrop-filter:blur(10px);border:1px solid var(--border-color);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition);color:var(--text-primary)}
+.icon-btn:hover,.icon-btn:active{transform:scale(1.1);border-color:var(--accent);box-shadow:0 0 20px var(--accent-glow)}
+.icon-btn svg{width:24px;height:24px;fill:currentColor}
+.logo-section{text-align:center;margin:30px 0 20px}
+.logo-text{font-size:4rem;font-weight:900;letter-spacing:4px;background:linear-gradient(135deg,var(--accent),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 30px var(--accent-glow));line-height:1}
+.logo-subtitle{font-size:1rem;color:var(--text-secondary);margin-top:8px;font-weight:600;letter-spacing:2px}
+.main-actions{display:flex;flex-direction:column;gap:16px;margin-top:20px}
+.btn{padding:18px 24px;border-radius:var(--radius);border:none;font-family:inherit;font-size:1.2rem;font-weight:700;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#6d28d9);color:#fff;box-shadow:0 8px 25px var(--accent-glow)}
+.btn-primary:active{transform:scale(.97)}
+.btn-secondary{background:var(--card-bg);backdrop-filter:blur(10px);color:var(--text-primary);border:1px solid var(--border-color)}
+.btn-secondary:active{transform:scale(.97);border-color:var(--accent)}
+.btn-danger{background:linear-gradient(135deg,var(--danger),#dc2626);color:#fff}
+.btn svg{width:24px;height:24px;fill:currentColor}
+.level-header{display:flex;align-items:center;gap:16px;margin-bottom:30px;padding-top:10px}
+.back-btn{background:var(--card-bg);border:1px solid var(--border-color);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-primary);transition:var(--transition);flex-shrink:0}
+.back-btn svg{width:24px;height:24px;fill:currentColor}
+.back-btn:active{transform:scale(.92);border-color:var(--accent)}
+.level-title{font-size:1.5rem;font-weight:800}
+.level-cards{display:flex;flex-direction:column;gap:20px}
+.level-card{background:var(--card-bg);backdrop-filter:blur(10px);border:1px solid var(--border-color);border-radius:var(--radius);padding:24px;cursor:pointer;transition:var(--transition);position:relative;overflow:hidden}
+.level-card:active{transform:scale(.98)}
+.level-card.easy{border-right:4px solid var(--success)}
+.level-card.medium{border-right:4px solid var(--warning)}
+.level-card.hard{border-right:4px solid var(--danger)}
+.level-card h3{font-size:1.4rem;margin-bottom:8px}
+.level-card p{color:var(--text-secondary);font-size:.9rem}
+.level-card .badge{position:absolute;top:20px;left:20px;background:var(--accent);color:#fff;padding:4px 12px;border-radius:20px;font-size:.8rem;font-weight:700}
+body[data-lang="en"] .level-card .badge{left:auto;right:20px}
+
+/* ===== شريط علوي في شاشة اللعب (مُحدّث مع زر رجوع) ===== */
+.game-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
+.game-top .game-back-btn{background:var(--card-bg);border:1px solid var(--border-color);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-primary);transition:var(--transition);flex-shrink:0}
+.game-top .game-back-btn svg{width:22px;height:22px;fill:currentColor}
+.game-top .game-back-btn:active{transform:scale(.92);border-color:var(--accent);background:var(--accent)}
+.game-top-center{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0}
+.progress-info{font-size:.9rem;color:var(--text-secondary);font-weight:600;white-space:nowrap}
+.lives{display:flex;gap:6px}
+.life-icon{width:22px;height:22px;color:var(--danger)}
+.life-icon.lost{opacity:.3}
+.progress-bar{width:100%;height:8px;background:var(--card-bg);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#6d28d9);border-radius:10px;transition:width .5s ease;width:0%}
+.question-card{background:var(--card-bg);backdrop-filter:blur(15px);border:1px solid var(--border-color);border-radius:var(--radius);padding:30px 24px;margin-bottom:24px;min-height:150px;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:var(--shadow)}
+.question-text{font-size:1.4rem;font-weight:700;line-height:1.6}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.option-btn{padding:18px 12px;background:var(--card-bg);backdrop-filter:blur(10px);border:2px solid var(--border-color);border-radius:16px;color:var(--text-primary);font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:var(--transition);text-align:center;word-break:break-word}
+.option-btn:active{transform:scale(.96)}
+.option-btn.correct{background:var(--success);border-color:var(--success);color:#fff;animation:pulseCorrect .5s ease}
+.option-btn.wrong{background:var(--danger);border-color:var(--danger);color:#fff;animation:shake .5s ease}
+.option-btn.disabled{opacity:.4;pointer-events:none}
+@keyframes pulseCorrect{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.help-actions{display:flex;justify-content:space-around;gap:10px;margin-top:auto;padding-top:10px}
+.help-btn{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:16px;padding:12px;cursor:pointer;transition:var(--transition);color:var(--text-primary);flex:1;min-width:0}
+.help-btn:active{transform:scale(.95)}
+.help-btn svg{width:28px;height:28px;fill:var(--accent)}
+.help-btn span{font-size:.7rem;font-weight:600;color:var(--text-secondary)}
+.help-btn .cost{font-size:.7rem;color:var(--warning);font-weight:700}
+.daily-challenge{text-align:center;padding:20px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.active{display:flex}
+.modal-content{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius);padding:24px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto;animation:fadeIn .3s ease;position:relative}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px}
+.modal-header h2{font-size:1.3rem}
+.back-modal-btn{background:var(--card-bg);border:1px solid var(--border-color);color:var(--text-primary);cursor:pointer;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:var(--transition);flex-shrink:0}
+.back-modal-btn svg{width:22px;height:22px;fill:currentColor}
+body[data-lang="en"] .back-modal-btn svg{transform:scaleX(-1)}
+.back-modal-btn:active{transform:scale(.92);border-color:var(--accent);background:var(--accent)}
+.setting-item{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border-color);gap:10px;flex-wrap:wrap}
+.setting-item:last-child{border-bottom:none}
+.setting-label{font-weight:600;font-size:1rem}
+.toggle-switch{width:50px;height:28px;background:var(--bg-tertiary);border-radius:20px;cursor:pointer;position:relative;transition:var(--transition);border:1px solid var(--border-color);flex-shrink:0}
+.toggle-switch.active{background:var(--accent)}
+.toggle-switch::after{content:'';position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:3px;transition:var(--transition)}
+.toggle-switch.active::after{left:24px}
+body[data-lang="en"] .toggle-switch::after{left:auto;right:3px}
+body[data-lang="en"] .toggle-switch.active::after{right:24px;left:auto}
+.theme-selector{display:flex;gap:10px}
+.theme-dot{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:var(--transition)}
+.theme-dot.active{border-color:#fff;transform:scale(1.1)}
+.theme-dot.galaxy{background:linear-gradient(135deg,#0f0c29,#8b5cf6)}
+.theme-dot.green{background:linear-gradient(135deg,#064e3b,#10b981)}
+.theme-dot.black{background:linear-gradient(135deg,#000,#f59e0b)}
+.lang-selector{display:flex;gap:10px}
+.lang-btn{padding:8px 16px;border-radius:12px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);cursor:pointer;font-family:inherit;font-weight:600;transition:var(--transition)}
+.lang-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.result-screen{text-align:center;padding:40px 20px}
+.result-icon{width:100px;height:100px;margin:0 auto 20px;color:var(--accent)}
+.result-title{font-size:2rem;font-weight:900;margin-bottom:12px}
+.result-stats{color:var(--text-secondary);font-size:1.1rem;margin-bottom:30px}
+.footer{text-align:center;padding:20px;color:var(--text-secondary);font-size:.8rem;margin-top:auto}
+.coin-fly{position:fixed;pointer-events:none;z-index:2000;font-size:1.5rem;font-weight:900;color:var(--warning);animation:flyUp 1s ease forwards}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-100px) scale(1.5)}}
+
+/* ===== نافذة المعلومات الاحترافية (حول / مشاركة) ===== */
+.info-modal-content{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius);padding:32px 24px;width:100%;max-width:420px;animation:fadeIn .3s ease;position:relative;text-align:center}
+.info-logo{width:80px;height:80px;margin:0 auto 16px;border-radius:22px;background:linear-gradient(135deg,var(--accent),#6d28d9);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 25px var(--accent-glow);font-size:2rem;font-weight:900;color:#fff;letter-spacing:1px}
+.info-title{font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,var(--accent),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.info-version{font-size:.85rem;color:var(--text-secondary);margin-bottom:20px;font-weight:600}
+.info-description{font-size:.95rem;color:var(--text-secondary);line-height:1.7;margin-bottom:24px;padding:16px;background:var(--card-bg);border-radius:14px;border:1px solid var(--border-color)}
+.info-features{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.info-feature{background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.info-feature-icon{width:28px;height:28px;color:var(--accent)}
+.info-feature-text{font-size:.7rem;color:var(--text-secondary);font-weight:600;text-align:center}
+.info-credit{font-size:.9rem;color:var(--text-secondary);margin-bottom:20px;font-weight:600}
+.info-credit strong{color:var(--accent);font-weight:800}
+.info-actions{display:flex;flex-direction:column;gap:10px}
+.share-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
+.share-opt{background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;padding:16px 12px;cursor:pointer;transition:var(--transition);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-primary);font-family:inherit;font-size:.85rem;font-weight:600}
+.share-opt:active{transform:scale(.95);border-color:var(--accent)}
+.share-opt-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.share-text-box{background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;padding:14px;margin:16px 0;font-size:.85rem;color:var(--text-primary);text-align:right;line-height:1.6;word-break:break-all;position:relative}
+body[data-lang="en"] .share-text-box{text-align:left}
+.share-copy-btn{position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:.7rem;cursor:pointer;font-family:inherit;font-weight:700}
+body[data-lang="en"] .share-copy-btn{left:auto;right:8px}
+</style>
+</head>
+<body data-theme="galaxy" data-lang="ar">
+<div id="app">
+  <!-- HOME -->
+  <div id="home-screen" class="screen active">
+    <div class="top-bar">
+      <div class="coins-display" id="coins-display">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".95"></circle><path d="M12 6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm.9 9.6v1.1h-1.7v-1c-1.1-.2-2-.9-2.1-2.1h1.3c.1.7.5 1.2 1.7 1.2 1.2 0 1.5-.6 1.5-1s-.3-1-1.7-1.3c-1.6-.4-2.6-1-2.6-2.3 0-1.1.9-1.8 2-2V7.3h1.7v1.2c1.1.3 1.7 1.2 1.8 2.1h-1.3c-.1-.7-.4-1.2-1.4-1.2s-1.5.4-1.5 1c0 .5.4.9 1.7 1.2 1.4.3 2.6.9 2.6 2.4-.1 1.1-.9 1.8-2 2z" fill="#1a1a1a"></path></svg>
+        <span id="coin-count">10</span>
+      </div>
+      <button class="icon-btn" id="settings-btn" aria-label="Settings">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"></path></svg>
+      </button>
+    </div>
+    <div class="logo-section">
+      <div class="logo-text">FOOTQ</div>
+      <div class="logo-subtitle" data-i18n="subtitle">تحدي كرة القدم</div>
+    </div>
+    <div class="main-actions">
+      <button class="btn btn-primary" id="play-btn">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+        <span data-i18n="play">ابدأ اللعب</span>
+      </button>
+      <button class="btn btn-secondary" id="daily-btn">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"></path></svg>
+        <span data-i18n="dailyChallenge">التحدي اليومي</span>
+      </button>
+    </div>
+    <div class="footer"><span data-i18n="by">by Ayoube BR</span></div>
+  </div>
+
+  <!-- LEVELS -->
+  <div id="level-screen" class="screen">
+    <div class="level-header">
+      <button class="back-btn" id="level-back-btn"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg></button>
+      <h2 class="level-title" data-i18n="chooseLevel">اختر المستوى</h2>
+    </div>
+    <div class="level-cards">
+      <div class="level-card easy" data-level="easy"><span class="badge">50</span><h3 data-i18n="easy">سهل</h3><p data-i18n="easyDesc">أسئلة متنوعة للمبتدئين</p></div>
+      <div class="level-card medium" data-level="medium"><span class="badge">70</span><h3 data-i18n="medium">متوسط</h3><p data-i18n="mediumDesc">تحدي لعشاق كرة القدم</p></div>
+      <div class="level-card hard" data-level="hard"><span class="badge">90</span><h3 data-i18n="hard">صعب</h3><p data-i18n="hardDesc">للخبراء فقط</p></div>
+    </div>
+  </div>
+
+  <!-- GAME (مع زر رجوع جديد) -->
+  <div id="game-screen" class="screen">
+    <div class="game-top">
+      <button class="game-back-btn" id="game-back-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
+      </button>
+      <div class="game-top-center">
+        <div class="progress-info" id="question-progress">1 / 50</div>
+        <div class="lives" id="lives-display"></div>
+      </div>
+      <div style="width:40px"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="question-card"><div class="question-text" id="question-text">تحميل...</div></div>
+    <div class="options-grid" id="options-grid"></div>
+    <div class="help-actions">
+      <button class="help-btn" id="hint-btn"><svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"></path></svg><span data-i18n="hint">تلميح</span><span class="cost">5</span></button>
+      <button class="help-btn" id="fifty-btn"><svg viewBox="0 0 24 24"><path d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H8V7h7.01V4L20 8l-3.99 4z"></path></svg><span data-i18n="fifty">حذف حرفين</span><span class="cost">5</span></button>
+      <button class="help-btn" id="skip-btn"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"></path></svg><span data-i18n="skip">تخطي</span><span class="cost">10</span></button>
+    </div>
+  </div>
+
+  <!-- DAILY -->
+  <div id="daily-screen" class="screen">
+    <div class="level-header">
+      <button class="back-btn" id="daily-back-btn"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg></button>
+      <h2 class="level-title" data-i18n="dailyChallenge">التحدي اليومي</h2>
+    </div>
+    <div class="daily-challenge" id="daily-content"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result-screen" class="screen">
+    <div class="result-screen">
+      <svg class="result-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+      <h1 class="result-title" data-i18n="congrats">أحسنت!</h1>
+      <p class="result-stats" id="result-stats"></p>
+      <button class="btn btn-primary" id="result-continue-btn"><span data-i18n="continue">متابعة</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button class="back-modal-btn" id="close-settings"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg></button>
+      <h2 data-i18n="settings">الإعدادات</h2>
+      <div style="width:40px"></div>
+    </div>
+    <div class="setting-item"><span class="setting-label" data-i18n="language">اللغة</span><div class="lang-selector"><button class="lang-btn active" data-lang="ar">عربي</button><button class="lang-btn" data-lang="en">EN</button></div></div>
+    <div class="setting-item"><span class="setting-label" data-i18n="theme">السمة</span><div class="theme-selector"><div class="theme-dot galaxy active" data-theme="galaxy"></div><div class="theme-dot green" data-theme="green"></div><div class="theme-dot black" data-theme="black"></div></div></div>
+    <div class="setting-item"><span class="setting-label" data-i18n="sound">الصوت</span><div class="toggle-switch active" id="sound-toggle"></div></div>
+    <div class="setting-item"><span class="setting-label" data-i18n="music">الموسيقى</span><div class="toggle-switch active" id="music-toggle"></div></div>
+    <div class="setting-item"><span class="setting-label" data-i18n="about">حول التطبيق</span><button class="btn btn-secondary" style="padding:8px 16px;font-size:.9rem" id="about-btn">FOOTQ v1.0</button></div>
+    <div class="setting-item"><span class="setting-label" data-i18n="share">مشاركة التطبيق</span><button class="btn btn-secondary" style="padding:8px 16px;font-size:.9rem" id="share-btn">↗</button></div>
+    <div class="setting-item"><span class="setting-label" data-i18n="reset">إعادة اللعب</span><button class="btn btn-danger" style="padding:8px 16px;font-size:.9rem" id="reset-btn" data-i18n="resetBtn">تصفير</button></div>
+  </div>
+</div>
+
+<!-- ===== ABOUT MODAL (احترافي) ===== -->
+<div class="modal-overlay" id="about-modal">
+  <div class="info-modal-content">
+    <div class="info-logo">⚽</div>
+    <h2 class="info-title">FOOTQ</h2>
+    <div class="info-version">Version 1.0.0 • 2026</div>
+    <p class="info-description" id="about-description">
+      لعبة الأسئلة الأكثر احترافية عن كرة القدم. اختبر معرفتك عبر 210 سؤال متنوع بين السهل والمتوسط والصعب، وتحدَّ أصدقاءك في التحدي اليومي!
+    </p>
+    <div class="info-features">
+      <div class="info-feature">
+        <svg class="info-feature-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
+        <div class="info-feature-text" id="feat1">210 سؤال</div>
+      </div>
+      <div class="info-feature">
+        <svg class="info-feature-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+        <div class="info-feature-text" id="feat2">3 مستويات</div>
+      </div>
+      <div class="info-feature">
+        <svg class="info-feature-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>
+        <div class="info-feature-text" id="feat3">تحدي يومي</div>
+      </div>
+    </div>
+    <div class="info-credit">
+      <span id="credit-text">تطوير</span> <strong>Ayoube BR</strong>
+    </div>
+    <div class="info-actions">
+      <button class="btn btn-primary" id="about-close-btn">
+        <span id="about-close-text">إغلاق</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SHARE MODAL (احترافي) ===== -->
+<div class="modal-overlay" id="share-modal">
+  <div class="info-modal-content">
+    <div class="info-logo" style="background:linear-gradient(135deg,#10b981,#059669)">📤</div>
+    <h2 class="info-title" id="share-title" style="background:linear-gradient(135deg,#10b981,#059669);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">شارك FOOTQ</h2>
+    <p class="info-description" id="share-desc">
+      تحدَّ أصدقاءك في لعبة الأسئلة الأكثر احترافية عن كرة القدم! شارك FOOTQ الآن واجعلهم ينضمون إلى التحدي.
+    </p>
+    <div class="share-text-box" id="share-text-box">
+      ⚽ FOOTQ - تحدي كرة القدم\n🏆 210 سؤال • 3 مستويات • تحدٍّ يومي\nby Ayoube BR
+      <button class="share-copy-btn" id="copy-share-btn">نسخ</button>
+    </div>
+    <div class="share-options">
+      <button class="share-opt" data-share="whatsapp">
+        <div class="share-opt-icon" style="background:#25D366">💬</div>
+        <span>WhatsApp</span>
+      </button>
+      <button class="share-opt" data-share="facebook">
+        <div class="share-opt-icon" style="background:#1877F2">📘</div>
+        <span>Facebook</span>
+      </button>
+      <button class="share-opt" data-share="twitter">
+        <div class="share-opt-icon" style="background:#000">𝕏</div>
+        <span>Twitter / X</span>
+      </button>
+      <button class="share-opt" data-share="telegram">
+        <div class="share-opt-icon" style="background:#229ED9">✈️</div>
+        <span>Telegram</span>
+      </button>
+    </div>
+    <div class="info-actions">
+      <button class="btn btn-secondary" id="share-close-btn">
+        <span id="share-close-text">إغلاق</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ QUESTIONS (210) ============ */
+const QUESTIONS = {
+easy:[
+{q:{ar:"كم عدد لاعبي فريق كرة القدم داخل الملعب؟",en:"How many players are on a football team on the pitch?"},opts:[{ar:"9",en:"9"},{ar:"10",en:"10"},{ar:"11",en:"11"},{ar:"12",en:"12"}],ans:2},
+{q:{ar:"ما لون البطاقة التي تعني الطرد؟",en:"What color card means ejection?"},opts:[{ar:"أصفر",en:"Yellow"},{ar:"أحمر",en:"Red"},{ar:"أخضر",en:"Green"},{ar:"أزرق",en:"Blue"}],ans:1},
+{q:{ar:"كم عدد أهداف الهاتريك؟",en:"How many goals is a hat-trick?"},opts:[{ar:"2",en:"2"},{ar:"3",en:"3"},{ar:"4",en:"4"},{ar:"5",en:"5"}],ans:1},
+{q:{ar:"من فاز بكأس العالم 2022؟",en:"Who won the 2022 World Cup?"},opts:[{ar:"الأرجنتين",en:"Argentina"},{ar:"فرنسا",en:"France"},{ar:"البرازيل",en:"Brazil"},{ar:"ألمانيا",en:"Germany"}],ans:0},
+{q:{ar:"ما جنسية ليونيل ميسي؟",en:"What is Lionel Messi's nationality?"},opts:[{ar:"برازيلي",en:"Brazilian"},{ar:"أرجنتيني",en:"Argentine"},{ar:"إسباني",en:"Spanish"},{ar:"أوروغوياني",en:"Uruguayan"}],ans:1},
+{q:{ar:"ما شكل كرة القدم؟",en:"What is the shape of a football?"},opts:[{ar:"مربع",en:"Square"},{ar:"بيضاوي",en:"Oval"},{ar:"كروي",en:"Round"},{ar:"مثلث",en:"Triangle"}],ans:2},
+{q:{ar:"كم مدة مباراة كرة القدم؟",en:"How long is a football match?"},opts:[{ar:"60 دقيقة",en:"60 min"},{ar:"80 دقيقة",en:"80 min"},{ar:"90 دقيقة",en:"90 min"},{ar:"120 دقيقة",en:"120 min"}],ans:2},
+{q:{ar:"كم المسافة إلى نقطة الجزاء؟",en:"Distance to the penalty spot?"},opts:[{ar:"9 أمتار",en:"9 m"},{ar:"10 أمتار",en:"10 m"},{ar:"11 متراً",en:"11 m"},{ar:"12 متراً",en:"12 m"}],ans:2},
+{q:{ar:"أي نادٍ يلعب فيه كريستيانو رونالدو حالياً؟",en:"Which club does Cristiano Ronaldo play for currently?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"مانشستر يونايتد",en:"Man United"},{ar:"النصر السعودي",en:"Al-Nassr"},{ar:"يوفنتوس",en:"Juventus"}],ans:2},
+{q:{ar:"ما مهمة حارس المرمى؟",en:"What is a goalkeeper's job?"},opts:[{ar:"تسجيل الأهداف",en:"Scoring goals"},{ar:"منع الأهداف",en:"Preventing goals"},{ar:"التحكيم",en:"Refereeing"},{ar:"التدريب",en:"Coaching"}],ans:1},
+{q:{ar:"ماذا تعني FIFA؟",en:"What does FIFA stand for?"},opts:[{ar:"الاتحاد الدولي لكرة القدم",en:"International Football Federation"},{ar:"الاتحاد الأوروبي",en:"European Union"},{ar:"الدوري الإنجليزي",en:"English League"},{ar:"كأس العالم",en:"World Cup"}],ans:0},
+{q:{ar:"أي دولة استضافت كأس العالم 2022؟",en:"Which country hosted the 2022 World Cup?"},opts:[{ar:"روسيا",en:"Russia"},{ar:"قطر",en:"Qatar"},{ar:"الإمارات",en:"UAE"},{ar:"السعودية",en:"Saudi Arabia"}],ans:1},
+{q:{ar:"من فاز بكأس العالم 2018؟",en:"Who won the 2018 World Cup?"},opts:[{ar:"كرواتيا",en:"Croatia"},{ar:"فرنسا",en:"France"},{ar:"ألمانيا",en:"Germany"},{ar:"البرازيل",en:"Brazil"}],ans:1},
+{q:{ar:"من فاز بكأس العالم 2014؟",en:"Who won the 2014 World Cup?"},opts:[{ar:"الأرجنتين",en:"Argentina"},{ar:"البرازيل",en:"Brazil"},{ar:"ألمانيا",en:"Germany"},{ar:"إسبانيا",en:"Spain"}],ans:2},
+{q:{ar:"كم عدد أشواط المباراة؟",en:"How many halves in a football match?"},opts:[{ar:"1",en:"1"},{ar:"2",en:"2"},{ar:"3",en:"3"},{ar:"4",en:"4"}],ans:1},
+{q:{ar:"ماذا تعني البطاقة الصفراء؟",en:"What does a yellow card mean?"},opts:[{ar:"إنذار",en:"Warning"},{ar:"طرد",en:"Ejection"},{ar:"هدف",en:"Goal"},{ar:"إصابة",en:"Injury"}],ans:0},
+{q:{ar:"من يرتدي القفازات في الملعب؟",en:"Who wears gloves on the pitch?"},opts:[{ar:"المهاجم",en:"Striker"},{ar:"المدافع",en:"Defender"},{ar:"حارس المرمى",en:"Goalkeeper"},{ar:"الحكم",en:"Referee"}],ans:2},
+{q:{ar:"كم عرض المرمى في كرة القدم؟",en:"Football goal width?"},opts:[{ar:"5.5 م",en:"5.5 m"},{ar:"6.32 م",en:"6.32 m"},{ar:"7.32 م",en:"7.32 m"},{ar:"8 م",en:"8 m"}],ans:2},
+{q:{ar:"في أي دولة نشأت كرة القدم الحديثة؟",en:"In which country was modern football born?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"إنجلترا",en:"England"},{ar:"إيطاليا",en:"Italy"},{ar:"إسبانيا",en:"Spain"}],ans:1},
+{q:{ar:"من هو نيمار؟",en:"Who is Neymar?"},opts:[{ar:"أرجنتيني",en:"Argentine"},{ar:"برازيلي",en:"Brazilian"},{ar:"برتغالي",en:"Portuguese"},{ar:"فرنسي",en:"French"}],ans:1},
+{q:{ar:"ريال مدريد نادٍ من أي دولة؟",en:"Real Madrid is from which country?"},opts:[{ar:"إيطاليا",en:"Italy"},{ar:"إسبانيا",en:"Spain"},{ar:"البرتغال",en:"Portugal"},{ar:"فرنسا",en:"France"}],ans:1},
+{q:{ar:"ما دوري La Liga؟",en:"What is La Liga?"},opts:[{ar:"دوري إسباني",en:"Spanish League"},{ar:"دوري إيطالي",en:"Italian League"},{ar:"دوري فرنسي",en:"French League"},{ar:"دوري ألماني",en:"German League"}],ans:0},
+{q:{ar:"الدوري الإنجليزي الممتاز في أي دولة؟",en:"Premier League is in which country?"},opts:[{ar:"إسبانيا",en:"Spain"},{ar:"إنجلترا",en:"England"},{ar:"ألمانيا",en:"Germany"},{ar:"إيطاليا",en:"Italy"}],ans:1},
+{q:{ar:"Serie A دوري أي دولة؟",en:"Serie A is which country's league?"},opts:[{ar:"إيطاليا",en:"Italy"},{ar:"إسبانيا",en:"Spain"},{ar:"فرنسا",en:"France"},{ar:"ألمانيا",en:"Germany"}],ans:0},
+{q:{ar:"Bundesliga دوري أي دولة؟",en:"Bundesliga is which country's league?"},opts:[{ar:"إنجلترا",en:"England"},{ar:"فرنسا",en:"France"},{ar:"ألمانيا",en:"Germany"},{ar:"إيطاليا",en:"Italy"}],ans:2},
+{q:{ar:"Ligue 1 دوري أي دولة؟",en:"Ligue 1 is which country's league?"},opts:[{ar:"بلجيكا",en:"Belgium"},{ar:"فرنسا",en:"France"},{ar:"إسبانيا",en:"Spain"},{ar:"البرتغال",en:"Portugal"}],ans:1},
+{q:{ar:"ما جنسية كيليان مبابي؟",en:"Kylian Mbappé's nationality?"},opts:[{ar:"فرنسي",en:"French"},{ar:"بلجيكي",en:"Belgian"},{ar:"سويسري",en:"Swiss"},{ar:"إيطالي",en:"Italian"}],ans:0},
+{q:{ar:"ما جنسية إيرلينغ هالاند؟",en:"Erling Haaland's nationality?"},opts:[{ar:"سويدي",en:"Swedish"},{ar:"دنماركي",en:"Danish"},{ar:"نرويجي",en:"Norwegian"},{ar:"فنلندي",en:"Finnish"}],ans:2},
+{q:{ar:"ما هو الركلة الحرة؟",en:"What is a free kick?"},opts:[{ar:"استئناف بعد خطأ",en:"Restart after foul"},{ar:"تسجيل مباشر",en:"Direct score"},{ar:"ركلة ترجيح",en:"Penalty"},{ar:"تمريرة",en:"Pass"}],ans:0},
+{q:{ar:"ما هو الرمية الجانبية؟",en:"What is a throw-in?"},opts:[{ar:"استئناف من الجانب",en:"Restart from sideline"},{ar:"ركلة جزاء",en:"Penalty"},{ar:"ركلة زاوية",en:"Corner"},{ar:"ركلة مرمى",en:"Goal kick"}],ans:0},
+{q:{ar:"في أي سنة أقيم أول كأس عالم؟",en:"First World Cup year?"},opts:[{ar:"1926",en:"1926"},{ar:"1930",en:"1930"},{ar:"1934",en:"1934"},{ar:"1950",en:"1950"}],ans:1},
+{q:{ar:"أكثر دولة فازت بكأس العالم؟",en:"Country with most World Cups?"},opts:[{ar:"ألمانيا",en:"Germany"},{ar:"إيطاليا",en:"Italy"},{ar:"البرازيل",en:"Brazil"},{ar:"الأرجنتين",en:"Argentina"}],ans:2},
+{q:{ar:"ليفربول نادٍ من أي دولة؟",en:"Liverpool is from which country?"},opts:[{ar:"إنجلترا",en:"England"},{ar:"إسكتلندا",en:"Scotland"},{ar:"ويلز",en:"Wales"},{ar:"أيرلندا",en:"Ireland"}],ans:0},
+{q:{ar:"برشلونة نادٍ من أي دولة؟",en:"Barcelona is from which country?"},opts:[{ar:"إسبانيا",en:"Spain"},{ar:"البرتغال",en:"Portugal"},{ar:"فرنسا",en:"France"},{ar:"إيطاليا",en:"Italy"}],ans:0},
+{q:{ar:"ملعب كامب نو لأي فريق؟",en:"Camp Nou belongs to which club?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"برشلونة",en:"Barcelona"},{ar:"أتلتيكو",en:"Atletico"},{ar:"إشبيلية",en:"Sevilla"}],ans:1},
+{q:{ar:"ملعب سانتياغو برنابيو لأي فريق؟",en:"Santiago Bernabéu belongs to which club?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"برشلونة",en:"Barcelona"},{ar:"فالنسيا",en:"Valencia"},{ar:"بيلباو",en:"Bilbao"}],ans:0},
+{q:{ar:"ملعب أولد ترافورد لأي فريق؟",en:"Old Trafford belongs to which club?"},opts:[{ar:"مانشستر سيتي",en:"Man City"},{ar:"ليفربول",en:"Liverpool"},{ar:"مانشستر يونايتد",en:"Man United"},{ar:"تشيلسي",en:"Chelsea"}],ans:2},
+{q:{ar:"ملعب أنفيلد لأي فريق؟",en:"Anfield belongs to which club?"},opts:[{ar:"إيفرتون",en:"Everton"},{ar:"ليفربول",en:"Liverpool"},{ar:"تشيلسي",en:"Chelsea"},{ar:"أرسنال",en:"Arsenal"}],ans:1},
+{q:{ar:"ما هي الركلة الدراجة؟",en:"What is a bicycle kick?"},opts:[{ar:"ركلة أكروباتية",en:"Acrobatic kick"},{ar:"ركلة جزاء",en:"Penalty"},{ar:"ركلة زاوية",en:"Corner"},{ar:"ركلة حرة",en:"Free kick"}],ans:0},
+{q:{ar:"ما هي ضربة الرأس؟",en:"What is a header?"},opts:[{ar:"ضرب الكرة بالرأس",en:"Hitting ball with head"},{ar:"ضرب الخصم",en:"Hitting opponent"},{ar:"تمريرة",en:"Pass"},{ar:"تسديد",en:"Shot"}],ans:0},
+{q:{ar:"ما هو المراوغة (Dribbling)؟",en:"What is dribbling?"},opts:[{ar:"التحرك بالكرة",en:"Moving with ball"},{ar:"التسديد",en:"Shooting"},{ar:"التمرير",en:"Passing"},{ar:"الصد",en:"Defending"}],ans:0},
+{q:{ar:"ما هي التدخلات (Tackle)؟",en:"What is a tackle?"},opts:[{ar:"أخذ الكرة من الخصم",en:"Taking ball from opponent"},{ar:"تمرير الكرة",en:"Passing ball"},{ar:"تسجيل هدف",en:"Scoring goal"},{ar:"استقبال الكرة",en:"Receiving ball"}],ans:0},
+{q:{ar:"ما هي VAR؟",en:"What is VAR?"},opts:[{ar:"حكم الفيديو المساعد",en:"Video Assistant Referee"},{ar:"لاعب",en:"Player"},{ar:"نادٍ",en:"Club"},{ar:"بطولة",en:"Tournament"}],ans:0},
+{q:{ar:"كأس الاتحاد الإنجليزي (FA Cup) في أي دولة؟",en:"FA Cup is in which country?"},opts:[{ar:"إنجلترا",en:"England"},{ar:"إسبانيا",en:"Spain"},{ar:"إيطاليا",en:"Italy"},{ar:"ألمانيا",en:"Germany"}],ans:0},
+{q:{ar:"من فاز بيورو 2024؟",en:"Who won Euro 2024?"},opts:[{ar:"إنجلترا",en:"England"},{ar:"فرنسا",en:"France"},{ar:"إسبانيا",en:"Spain"},{ar:"ألمانيا",en:"Germany"}],ans:2},
+{q:{ar:"من فاز بكوبا أمريكا 2024؟",en:"Who won Copa America 2024?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"الأرجنتين",en:"Argentina"},{ar:"أوروغواي",en:"Uruguay"},{ar:"كولومبيا",en:"Colombia"}],ans:1},
+{q:{ar:"من فاز بدوري أبطال أوروبا 2025؟",en:"Who won UCL 2025?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"إنتر ميلان",en:"Inter"},{ar:"باريس سان جيرمان",en:"PSG"},{ar:"بايرن ميونخ",en:"Bayern"}],ans:2},
+{q:{ar:"من يستضيف كأس العالم 2026؟",en:"Who hosts the 2026 World Cup?"},opts:[{ar:"قطر",en:"Qatar"},{ar:"أمريكا وكندا والمكسيك",en:"USA, Canada & Mexico"},{ar:"المغرب",en:"Morocco"},{ar:"إسبانيا",en:"Spain"}],ans:1},
+{q:{ar:"كم عدد المنتخبات في كأس العالم 2026؟",en:"How many teams in 2026 World Cup?"},opts:[{ar:"32",en:"32"},{ar:"36",en:"36"},{ar:"40",en:"40"},{ar:"48",en:"48"}],ans:3},
+{q:{ar:"ما اللقب الذي يطلق على منتخب البرازيل؟",en:"What is Brazil's national team nickname?"},opts:[{ar:"السامبا",en:"Seleção"},{ar:"الديوك",en:"Les Bleus"},{ar:"المانشافت",en:"Die Mannschaft"},{ar:"الأسود",en:"Lions"}],ans:0},
+{q:{ar:"ما اللقب الذي يطلق على منتخب فرنسا؟",en:"France's national team nickname?"},opts:[{ar:"الديوك",en:"Les Bleus"},{ar:"السامبا",en:"Seleção"},{ar:"الطليان",en:"Azzurri"},{ar:"الأسود",en:"Lions"}],ans:0},
+{q:{ar:"ما اللقب الذي يطلق على منتخب إيطاليا؟",en:"Italy's national team nickname?"},opts:[{ar:"الديوك",en:"Les Bleus"},{ar:"الطليان",en:"Azzurri"},{ar:"الأسود",en:"Lions"},{ar:"السامبا",en:"Seleção"}],ans:1},
+{q:{ar:"من هو أفضل هداف في تاريخ دوري أبطال أوروبا؟",en:"All-time UCL top scorer?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"ليفاندوفسكي",en:"Lewandowski"},{ar:"بنزيما",en:"Benzema"}],ans:1}
+],
+medium:[
+{q:{ar:"من سجل هدف القرن في نهائي 1986؟",en:"Who scored the Goal of the Century in 1986?"},opts:[{ar:"مارادونا",en:"Maradona"},{ar:"بيليه",en:"Pelé"},{ar:"زيدان",en:"Zidane"},{ar:"رونالدينيو",en:"Ronaldinho"}],ans:0},
+{q:{ar:"من هو الهداف التاريخي لدوري أبطال أوروبا؟",en:"All-time UCL top scorer?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"راؤول",en:"Raúl"},{ar:"بنزيما",en:"Benzema"}],ans:1},
+{q:{ar:"كم عدد الكرات الذهبية لميسي؟",en:"How many Ballon d'Or has Messi won?"},opts:[{ar:"6",en:"6"},{ar:"7",en:"7"},{ar:"8",en:"8"},{ar:"9",en:"9"}],ans:2},
+{q:{ar:"أكثر نادٍ فاز بدوري أبطال أوروبا؟",en:"Club with most UCL titles?"},opts:[{ar:"ميلان",en:"AC Milan"},{ar:"ريال مدريد",en:"Real Madrid"},{ar:"بايرن",en:"Bayern"},{ar:"ليفربول",en:"Liverpool"}],ans:1},
+{q:{ar:"من فاز بالكرة الذهبية 2024؟",en:"2024 Ballon d'Or winner?"},opts:[{ar:"فينيسيوس",en:"Vinícius"},{ar:"بيلينغهام",en:"Bellingham"},{ar:"رودري",en:"Rodri"},{ar:"هالاند",en:"Haaland"}],ans:2},
+{q:{ar:"من فاز بالكرة الذهبية 2025؟",en:"2025 Ballon d'Or winner?"},opts:[{ar:"لامين يامال",en:"Lamine Yamal"},{ar:"عثمان ديمبيلي",en:"Ousmane Dembélé"},{ar:"رافينيا",en:"Raphinha"},{ar:"مبابي",en:"Mbappé"}],ans:1},
+{q:{ar:"من فاز بدوري أبطال أوروبا 2025؟",en:"2025 UCL winner?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"إنتر",en:"Inter"},{ar:"باريس سان جيرمان",en:"PSG"},{ar:"أرسنال",en:"Arsenal"}],ans:2},
+{q:{ar:"من فاز بدوري أبطال أوروبا 2024؟",en:"2024 UCL winner?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"دورتموند",en:"Dortmund"},{ar:"بايرن",en:"Bayern"},{ar:"مانشستر سيتي",en:"Man City"}],ans:0},
+{q:{ar:"من فاز بيورو 2020 (أقيمت 2021)؟",en:"Euro 2020 (in 2021) winner?"},opts:[{ar:"إنجلترا",en:"England"},{ar:"إيطاليا",en:"Italy"},{ar:"إسبانيا",en:"Spain"},{ar:"فرنسا",en:"France"}],ans:1},
+{q:{ar:"من فاز بكأس أفريقيا 2024؟",en:"AFCON 2024 winner?"},opts:[{ar:"مصر",en:"Egypt"},{ar:"السنغال",en:"Senegal"},{ar:"ساحل العاج",en:"Ivory Coast"},{ar:"المغرب",en:"Morocco"}],ans:2},
+{q:{ar:"من هو الهداف التاريخي لكأس العالم؟",en:"All-time World Cup top scorer?"},opts:[{ar:"بيليه",en:"Pelé"},{ar:"رونالدو البرازيلي",en:"Ronaldo"},{ar:"كلوزه",en:"Klose"},{ar:"ميسي",en:"Messi"}],ans:2},
+{q:{ar:"من فاز بكأس العالم كلاعب ومدرب؟",en:"Won WC as player and coach?"},opts:[{ar:"بيليه",en:"Pelé"},{ar:"زاغالو/بيكنباور/ديدييه ديشامب",en:"Zagallo/Beckenbauer/Deschamps"},{ar:"مارادونا",en:"Maradona"},{ar:"زيدان",en:"Zidane"}],ans:1},
+{q:{ar:"من سجل أكثر أهداف في نسخة واحدة من كأس العالم؟",en:"Most goals in single World Cup?"},opts:[{ar:"فونتين",en:"Fontaine"},{ar:"بيليه",en:"Pelé"},{ar:"رونالدو",en:"Ronaldo"},{ar:"مولر",en:"Müller"}],ans:0},
+{q:{ar:"من فاز بالكرة الذهبية 2023؟",en:"2023 Ballon d'Or winner?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"هالاند",en:"Haaland"},{ar:"مبابي",en:"Mbappé"},{ar:"رونالدو",en:"Ronaldo"}],ans:0},
+{q:{ar:"من فاز بالكرة الذهبية 2022؟",en:"2022 Ballon d'Or winner?"},opts:[{ar:"بنزيما",en:"Benzema"},{ar:"ميسي",en:"Messi"},{ar:"ماني",en:"Mané"},{ar:"صلاح",en:"Salah"}],ans:0},
+{q:{ar:"2020 لم تُمنح الكرة الذهبية بسبب ماذا؟",en:"Why wasn't 2020 Ballon d'Or awarded?"},opts:[{ar:"كورونا",en:"COVID-19"},{ar:"حرب",en:"War"},{ar:"خلاف",en:"Dispute"},{ar:"إعادة تنظيم",en:"Reorganization"}],ans:0},
+{q:{ar:"من فاز بالحذاء الذهبي في مونديال 2022؟",en:"2022 WC Golden Boot winner?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"مبابي",en:"Mbappé"},{ar:"ألفاريز",en:"Álvarez"},{ar:"جيرو",en:"Giroud"}],ans:1},
+{q:{ar:"من فاز بالكرة الذهبية في مونديال 2022؟",en:"2022 WC Golden Ball winner?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"مبابي",en:"Mbappé"},{ar:"مودريتش",en:"Modrić"},{ar:"أمبابي",en:"Amrabat"}],ans:0},
+{q:{ar:"من فاز بالقفاز الذهبي في مونديال 2022؟",en:"2022 WC Golden Glove winner?"},opts:[{ar:"لوريس",en:"Lloris"},{ar:"بونو",en:"Bono"},{ar:"إميليانو مارتينيز",en:"E. Martínez"},{ar:"كورتوا",en:"Courtois"}],ans:2},
+{q:{ar:"من هو هداف ريال مدريد التاريخي؟",en:"Real Madrid all-time top scorer?"},opts:[{ar:"راؤول",en:"Raúl"},{ar:"رونالدو",en:"Ronaldo"},{ar:"بنزيما",en:"Benzema"},{ar:"دي ستيفانو",en:"Di Stéfano"}],ans:1},
+{q:{ar:"من هو هداف برشلونة التاريخي؟",en:"Barcelona all-time top scorer?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"سواريز",en:"Suárez"},{ar:"رونالدينيو",en:"Ronaldinho"},{ar:"إيتو",en:"Eto'o"}],ans:0},
+{q:{ar:"من هو هداف بايرن ميونخ التاريخي؟",en:"Bayern Munich all-time top scorer?"},opts:[{ar:"ليفاندوفسكي",en:"Lewandowski"},{ar:"جيرد مولر",en:"Gerd Müller"},{ar:"رومينيغه",en:"Rummenigge"},{ar:"مولر توماس",en:"T. Müller"}],ans:1},
+{q:{ar:"من فاز بأول كأس عالم 1930؟",en:"First World Cup 1930 winner?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"الأرجنتين",en:"Argentina"},{ar:"أوروغواي",en:"Uruguay"},{ar:"إيطاليا",en:"Italy"}],ans:2},
+{q:{ar:"من فاز بأول دوري أبطال أوروبا 1956؟",en:"First European Cup 1956 winner?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"ميلان",en:"AC Milan"},{ar:"بنفيكا",en:"Benfica"},{ar:"برشلونة",en:"Barcelona"}],ans:0},
+{q:{ar:"من يُلقب بـ The Special One؟",en:"Who is nicknamed 'The Special One'?"},opts:[{ar:"غوارديولا",en:"Guardiola"},{ar:"مورينيو",en:"Mourinho"},{ar:"كلوب",en:"Klopp"},{ar:"أنشيلوتي",en:"Ancelotti"}],ans:1},
+{q:{ar:"من درّب برشلونة 2008-2012؟",en:"Barcelona coach 2008-2012?"},opts:[{ar:"غوارديولا",en:"Guardiola"},{ar:"فيلانوفا",en:"Vilanova"},{ar:"إنريكي",en:"L. Enrique"},{ar:"فالفيردي",en:"Valverde"}],ans:0},
+{q:{ar:"من درّب مانشستر يونايتد 1986-2013؟",en:"Man United coach 1986-2013?"},opts:[{ar:"مورينيو",en:"Mourinho"},{ar:"فيرغسون",en:"Ferguson"},{ar:"مويس",en:"Moyes"},{ar:"فان خال",en:"Van Gaal"}],ans:1},
+{q:{ar:"من هو الهداف التاريخي للمنتخبات؟",en:"All-time international top scorer?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"علي دائي",en:"Ali Daei"},{ar:"بيليه",en:"Pelé"}],ans:1},
+{q:{ar:"من فاز بالدوري الإنجليزي 2023-24؟",en:"2023-24 PL winner?"},opts:[{ar:"ليفربول",en:"Liverpool"},{ar:"مانشستر سيتي",en:"Man City"},{ar:"أرسنال",en:"Arsenal"},{ar:"تشيلسي",en:"Chelsea"}],ans:1},
+{q:{ar:"من فاز بالدوري الإنجليزي 2024-25؟",en:"2024-25 PL winner?"},opts:[{ar:"ليفربول",en:"Liverpool"},{ar:"مانشستر سيتي",en:"Man City"},{ar:"أرسنال",en:"Arsenal"},{ar:"تشيلسي",en:"Chelsea"}],ans:0},
+{q:{ar:"من فاز بالدوري الإسباني 2024-25؟",en:"2024-25 La Liga winner?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"برشلونة",en:"Barcelona"},{ar:"أتلتيكو",en:"Atletico"},{ar:"إشبيلية",en:"Sevilla"}],ans:1},
+{q:{ar:"من فاز بالدوري الألماني 2024-25؟",en:"2024-25 Bundesliga winner?"},opts:[{ar:"دورتموند",en:"Dortmund"},{ar:"بايرن ميونخ",en:"Bayern Munich"},{ar:"ليفركوزن",en:"Leverkusen"},{ar:"لايبزيغ",en:"Leipzig"}],ans:1},
+{q:{ar:"من فاز بالدوري الإيطالي 2024-25؟",en:"2024-25 Serie A winner?"},opts:[{ar:"إنتر",en:"Inter"},{ar:"ميلان",en:"AC Milan"},{ar:"نابولي",en:"Napoli"},{ar:"يوفنتوس",en:"Juventus"}],ans:2},
+{q:{ar:"من فاز بالدوري الفرنسي 2024-25؟",en:"2024-25 Ligue 1 winner?"},opts:[{ar:"مارسيليا",en:"Marseille"},{ar:"موناكو",en:"Monaco"},{ar:"باريس سان جيرمان",en:"PSG"},{ar:"ليون",en:"Lyon"}],ans:2},
+{q:{ar:"من فاز بكأس إنجلترا 2025؟",en:"2025 FA Cup winner?"},opts:[{ar:"مانشستر سيتي",en:"Man City"},{ar:"كريستال بالاس",en:"Crystal Palace"},{ar:"أرسنال",en:"Arsenal"},{ar:"ليفربول",en:"Liverpool"}],ans:1},
+{q:{ar:"أي لاعب أفريقي فاز بالكرة الذهبية؟",en:"African player who won Ballon d'Or?"},opts:[{ar:"إيتو",en:"Eto'o"},{ar:"دروغبا",en:"Drogba"},{ar:"جورج ويا",en:"George Weah"},{ar:"صلاح",en:"Salah"}],ans:2},
+{q:{ar:"من فاز بكأس الأمم الأوروبية 2020 (أقيمت 2021)؟",en:"Euro 2020 winner (played 2021)?"},opts:[{ar:"إيطاليا",en:"Italy"},{ar:"إنجلترا",en:"England"},{ar:"إسبانيا",en:"Spain"},{ar:"فرنسا",en:"France"}],ans:0},
+{q:{ar:"محمد صلاح يلعب لأي نادٍ؟",en:"Which club does Mohamed Salah play for?"},opts:[{ar:"تشيلسي",en:"Chelsea"},{ar:"ليفربول",en:"Liverpool"},{ar:"روما",en:"Roma"},{ar:"أرسنال",en:"Arsenal"}],ans:1},
+{q:{ar:"سون هيونغ مين يلعب لأي نادٍ؟",en:"Son Heung-min plays for which club?"},opts:[{ar:"توتنهام",en:"Tottenham"},{ar:"أرسنال",en:"Arsenal"},{ar:"مانشستر يونايتد",en:"Man United"},{ar:"ليفربول",en:"Liverpool"}],ans:0},
+{q:{ar:"إلى أي نادٍ انتقل مبابي 2024؟",en:"Where did Mbappé move in 2024?"},opts:[{ar:"ليفربول",en:"Liverpool"},{ar:"ريال مدريد",en:"Real Madrid"},{ar:"مانشستر سيتي",en:"Man City"},{ar:"بايرن",en:"Bayern"}],ans:1},
+{q:{ar:"من يُلقب بـ El Bicho؟",en:"Who is nicknamed 'El Bicho'?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"نيمار",en:"Neymar"},{ar:"بنزيما",en:"Benzema"}],ans:1},
+{q:{ar:"من يُلقب بـ La Pulga؟",en:"Who is nicknamed 'La Pulga'?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"أغويرو",en:"Agüero"},{ar:"دي ماريا",en:"Di María"}],ans:0},
+{q:{ar:"من فاز بكأس العالم للأندية 2025؟",en:"2025 Club World Cup winner?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"مانشستر سيتي",en:"Man City"},{ar:"تشيلسي",en:"Chelsea"},{ar:"باريس سان جيرمان",en:"PSG"}],ans:2},
+{q:{ar:"من فاز بالكرة الذهبية 2018؟",en:"2018 Ballon d'Or winner?"},opts:[{ar:"رونالدو",en:"Ronaldo"},{ar:"مودريتش",en:"Modrić"},{ar:"ميسي",en:"Messi"},{ar:"غريزمان",en:"Griezmann"}],ans:1},
+{q:{ar:"من فاز بالكرة الذهبية 2017؟",en:"2017 Ballon d'Or winner?"},opts:[{ar:"رونالدو",en:"Ronaldo"},{ar:"ميسي",en:"Messi"},{ar:"نيمار",en:"Neymar"},{ar:"مودريتش",en:"Modrić"}],ans:0},
+{q:{ar:"من فاز بالكرة الذهبية 2016؟",en:"2016 Ballon d'Or winner?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"غريزمان",en:"Griezmann"},{ar:"بيبي",en:"Pepe"}],ans:1},
+{q:{ar:"من فاز بالكرة الذهبية 2015؟",en:"2015 Ballon d'Or winner?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"نيمار",en:"Neymar"},{ar:"سواريز",en:"Suárez"}],ans:0},
+{q:{ar:"من فاز بالكرة الذهبية 2014؟",en:"2014 Ballon d'Or winner?"},opts:[{ar:"رونالدو",en:"Ronaldo"},{ar:"ميسي",en:"Messi"},{ar:"نوير",en:"Neuer"},{ar:"روبن",en:"Robben"}],ans:0},
+{q:{ar:"من فاز بالكرة الذهبية 2013؟",en:"2013 Ballon d'Or winner?"},opts:[{ar:"رونالدو",en:"Ronaldo"},{ar:"ميسي",en:"Messi"},{ar:"ريبيري",en:"Ribéry"},{ar:"إبراهيموفيتش",en:"Ibrahimović"}],ans:0},
+{q:{ar:"من فاز بالكرة الذهبية 2012؟",en:"2012 Ballon d'Or winner?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"إنييستا",en:"Iniesta"},{ar:"تشافي",en:"Xavi"}],ans:0},
+{q:{ar:"من فاز بالكرة الذهبية 2011؟",en:"2011 Ballon d'Or winner?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"تشافي",en:"Xavi"},{ar:"سنيدر",en:"Sneijder"}],ans:0},
+{q:{ar:"من فاز بالكرة الذهبية 2010؟",en:"2010 Ballon d'Or winner?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"إنييستا",en:"Iniesta"},{ar:"تشافي",en:"Xavi"},{ar:"رونالدو",en:"Ronaldo"}],ans:0},
+{q:{ar:"من فاز بدوري الأمم الأوروبية 2025؟",en:"2025 UEFA Nations League winner?"},opts:[{ar:"إسبانيا",en:"Spain"},{ar:"فرنسا",en:"France"},{ar:"البرتغال",en:"Portugal"},{ar:"إيطاليا",en:"Italy"}],ans:2},
+{q:{ar:"تشيلسي نادٍ من أي دولة؟",en:"Chelsea is from which country?"},opts:[{ar:"إنجلترا",en:"England"},{ar:"إسبانيا",en:"Spain"},{ar:"إيطاليا",en:"Italy"},{ar:"فرنسا",en:"France"}],ans:0},
+{q:{ar:"دورتموند نادٍ من أي دولة؟",en:"Dortmund is from which country?"},opts:[{ar:"ألمانيا",en:"Germany"},{ar:"هولندا",en:"Netherlands"},{ar:"بلجيكا",en:"Belgium"},{ar:"النمسا",en:"Austria"}],ans:0},
+{q:{ar:"أياكس نادٍ من أي دولة؟",en:"Ajax is from which country?"},opts:[{ar:"بلجيكا",en:"Belgium"},{ar:"هولندا",en:"Netherlands"},{ar:"ألمانيا",en:"Germany"},{ar:"فرنسا",en:"France"}],ans:1},
+{q:{ar:"بنفيكا نادٍ من أي دولة؟",en:"Benfica is from which country?"},opts:[{ar:"البرتغال",en:"Portugal"},{ar:"إسبانيا",en:"Spain"},{ar:"البرازيل",en:"Brazil"},{ar:"إيطاليا",en:"Italy"}],ans:0},
+{q:{ar:"غلطة سراي نادٍ من أي دولة؟",en:"Galatasaray is from which country?"},opts:[{ar:"اليونان",en:"Greece"},{ar:"تركيا",en:"Turkey"},{ar:"مصر",en:"Egypt"},{ar:"المغرب",en:"Morocco"}],ans:1},
+{q:{ar:"الأهلي نادٍ من أي دولة؟",en:"Al Ahly is from which country?"},opts:[{ar:"مصر",en:"Egypt"},{ar:"تونس",en:"Tunisia"},{ar:"السعودية",en:"Saudi"},{ar:"المغرب",en:"Morocco"}],ans:0},
+{q:{ar:"بوكا جونيورز نادٍ من أي دولة؟",en:"Boca Juniors is from which country?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"الأرجنتين",en:"Argentina"},{ar:"أوروغواي",en:"Uruguay"},{ar:"تشيلي",en:"Chile"}],ans:1},
+{q:{ar:"فلامنغو نادٍ من أي دولة؟",en:"Flamengo is from which country?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"الأرجنتين",en:"Argentina"},{ar:"البرتغال",en:"Portugal"},{ar:"المكسيك",en:"Mexico"}],ans:0},
+{q:{ar:"كم نتيجة نهائي مونديال 2022؟",en:"2022 WC final score (regular + ET)?"},opts:[{ar:"2-1",en:"2-1"},{ar:"3-2",en:"3-2"},{ar:"3-3",en:"3-3"},{ar:"4-3",en:"4-3"}],ans:2},
+{q:{ar:"كم هدفاً سجل مبابي في نهائي مونديال 2022؟",en:"How many goals did Mbappé score in 2022 WC final?"},opts:[{ar:"1",en:"1"},{ar:"2",en:"2"},{ar:"3",en:"3"},{ar:"4",en:"4"}],ans:2},
+{q:{ar:"من فاز بمونديال 2006؟",en:"2006 World Cup winner?"},opts:[{ar:"فرنسا",en:"France"},{ar:"إيطاليا",en:"Italy"},{ar:"ألمانيا",en:"Germany"},{ar:"البرتغال",en:"Portugal"}],ans:1},
+{q:{ar:"من فاز بمونديال 2002؟",en:"2002 World Cup winner?"},opts:[{ar:"ألمانيا",en:"Germany"},{ar:"البرازيل",en:"Brazil"},{ar:"إيطاليا",en:"Italy"},{ar:"إسبانيا",en:"Spain"}],ans:1},
+{q:{ar:"من فاز بمونديال 1998؟",en:"1998 World Cup winner?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"فرنسا",en:"France"},{ar:"إيطاليا",en:"Italy"},{ar:"الأرجنتين",en:"Argentina"}],ans:1},
+{q:{ar:"من فاز بمونديال 1994؟",en:"1994 World Cup winner?"},opts:[{ar:"إيطاليا",en:"Italy"},{ar:"البرازيل",en:"Brazil"},{ar:"ألمانيا",en:"Germany"},{ar:"الأرجنتين",en:"Argentina"}],ans:1},
+{q:{ar:"من فاز بمونديال 1990؟",en:"1990 World Cup winner?"},opts:[{ar:"ألمانيا",en:"Germany"},{ar:"الأرجنتين",en:"Argentina"},{ar:"إيطاليا",en:"Italy"},{ar:"البرازيل",en:"Brazil"}],ans:0},
+{q:{ar:"من فاز بمونديال 1986؟",en:"1986 World Cup winner?"},opts:[{ar:"الأرجنتين",en:"Argentina"},{ar:"ألمانيا",en:"Germany"},{ar:"البرازيل",en:"Brazil"},{ar:"فرنسا",en:"France"}],ans:0},
+{q:{ar:"من فاز بمونديال 1982؟",en:"1982 World Cup winner?"},opts:[{ar:"إيطاليا",en:"Italy"},{ar:"ألمانيا",en:"Germany"},{ar:"البرازيل",en:"Brazil"},{ar:"الأرجنتين",en:"Argentina"}],ans:0},
+{q:{ar:"من فاز بمونديال 1978؟",en:"1978 World Cup winner?"},opts:[{ar:"هولندا",en:"Netherlands"},{ar:"الأرجنتين",en:"Argentina"},{ar:"ألمانيا",en:"Germany"},{ar:"إيطاليا",en:"Italy"}],ans:1}
+],
+hard:[
+{q:{ar:"من هو اللاعب الوحيد الذي فاز بكأس العالم 3 مرات؟",en:"Only player to win 3 World Cups?"},opts:[{ar:"بيليه",en:"Pelé"},{ar:"مارادونا",en:"Maradona"},{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"}],ans:0},
+{q:{ar:"من فاز بكأس العالم 1950؟",en:"1950 World Cup winner?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"أوروغواي",en:"Uruguay"},{ar:"إيطاليا",en:"Italy"},{ar:"السويد",en:"Sweden"}],ans:1},
+{q:{ar:"ما هو الماراكانازو؟",en:"What is the Maracanazo?"},opts:[{ar:"فوز أوروغواي على البرازيل 1950",en:"Uruguay beat Brazil 1950"},{ar:"فوز البرازيل على إيطاليا",en:"Brazil beat Italy"},{ar:"هدف مارادونا",en:"Maradona's goal"},{ar:"حريق الملعب",en:"Stadium fire"}],ans:0},
+{q:{ar:"من سجل أسرع هدف في تاريخ كأس العالم؟",en:"Fastest WC goal scorer?"},opts:[{ar:"رونالدو",en:"Ronaldo"},{ar:"هاكان شوكور",en:"Hakan Şükür"},{ar:"ميسي",en:"Messi"},{ar:"بيليه",en:"Pelé"}],ans:1},
+{q:{ar:"من هو أصغر فائز بكأس العالم؟",en:"Youngest World Cup winner?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"بيليه",en:"Pelé"},{ar:"مارادونا",en:"Maradona"},{ar:"رونالدو",en:"Ronaldo"}],ans:1},
+{q:{ar:"من هو حارس المرمى الوحيد الذي فاز بالكرة الذهبية؟",en:"Only goalkeeper to win Ballon d'Or?"},opts:[{ar:"بوفون",en:"Buffon"},{ar:"كاسياس",en:"Casillas"},{ar:"ياشين",en:"Yashin"},{ar:"نوير",en:"Neuer"}],ans:2},
+{q:{ar:"من فاز بأول كرة ذهبية في التاريخ؟",en:"First Ballon d'Or winner?"},opts:[{ar:"دي ستيفانو",en:"Di Stéfano"},{ar:"ستانلي ماثيوز",en:"Stanley Matthews"},{ar:"بيليه",en:"Pelé"},{ar:"بوشكاش",en:"Puskás"}],ans:1},
+{q:{ar:"في أي سنة صدر حكم بوسمان؟",en:"Year of Bosman ruling?"},opts:[{ar:"1990",en:"1990"},{ar:"1993",en:"1993"},{ar:"1995",en:"1995"},{ar:"1998",en:"1998"}],ans:2},
+{q:{ar:"أي نادٍ فاز بـ9 ألقاب متتالية في الدوري الإيطالي؟",en:"Club with 9 consecutive Serie A titles?"},opts:[{ar:"ميلان",en:"AC Milan"},{ar:"إنتر",en:"Inter"},{ar:"يوفنتوس",en:"Juventus"},{ar:"نابولي",en:"Napoli"}],ans:2},
+{q:{ar:"من درّب فرنسا للفوز بمونديال 1998؟",en:"Coach of France's 1998 WC win?"},opts:[{ar:"دومينيك",en:"Domenech"},{ar:"جاكيه",en:"Jacquet"},{ar:"دیشامب",en:"Deschamps"},{ar:"بلان",en:"Blanc"}],ans:1},
+{q:{ar:"من درّب إسبانيا للفوز بمونديال 2010؟",en:"Coach of Spain's 2010 WC win?"},opts:[{ar:"ديل بوسكي",en:"del Bosque"},{ar:"أراغونيس",en:"Aragonés"},{ar:"إنريكي",en:"L. Enrique"},{ar:"فالفيردي",en:"Valverde"}],ans:0},
+{q:{ar:"من درّب ألمانيا للفوز بمونديال 2014؟",en:"Coach of Germany's 2014 WC win?"},opts:[{ar:"كلينسمان",en:"Klinsmann"},{ar:"لوف",en:"Löw"},{ar:"فولر",en:"Völler"},{ar:"بيكنباور",en:"Beckenbauer"}],ans:1},
+{q:{ar:"من درّب الأرجنتين للفوز بمونديال 2022؟",en:"Coach of Argentina's 2022 WC win?"},opts:[{ar:"سامباولي",en:"Sampaoli"},{ar:"سكالوني",en:"Scaloni"},{ar:"باتيستوتا",en:"Batistuta"},{ar:"مارتينو",en:"Martino"}],ans:1},
+{q:{ar:"من سجل هدف الفوز في نهائي 2010؟",en:"2010 WC final winning goal scorer?"},opts:[{ar:"تشافي",en:"Xavi"},{ar:"فيا",en:"Villa"},{ar:"إنييستا",en:"Iniesta"},{ar:"توريس",en:"Torres"}],ans:2},
+{q:{ar:"من سجل هدف الفوز في نهائي 2014؟",en:"2014 WC final winning goal scorer?"},opts:[{ar:"كلوزه",en:"Klose"},{ar:"مولر",en:"Müller"},{ar:"غوتزه",en:"Götze"},{ar:"شورله",en:"Schürrle"}],ans:2},
+{q:{ar:"من سجل هاتريك في نهائي 1966؟",en:"Who scored a hat-trick in the 1966 final?"},opts:[{ar:"بيليه",en:"Pelé"},{ar:"هيرست",en:"Hurst"},{ar:"مور",en:"Moore"},{ar:"تشارلتون",en:"Charlton"}],ans:1},
+{q:{ar:"أكثر منتخب خسر نهائيات كأس العالم؟",en:"Team with most WC final losses?"},opts:[{ar:"الأرجنتين",en:"Argentina"},{ar:"ألمانيا",en:"Germany"},{ar:"البرازيل",en:"Brazil"},{ar:"إيطاليا",en:"Italy"}],ans:1},
+{q:{ar:"من هو هداف البرازيل التاريخي؟",en:"Brazil all-time top scorer?"},opts:[{ar:"رونالدو",en:"Ronaldo"},{ar:"بيليه",en:"Pelé"},{ar:"نيمار",en:"Neymar"},{ar:"روماريو",en:"Romário"}],ans:1},
+{q:{ar:"من هو هداف الأرجنتين التاريخي؟",en:"Argentina all-time top scorer?"},opts:[{ar:"باتيستوتا",en:"Batistuta"},{ar:"مارادونا",en:"Maradona"},{ar:"ميسي",en:"Messi"},{ar:"أغويرو",en:"Agüero"}],ans:2},
+{q:{ar:"من هو هداف فرنسا التاريخي؟",en:"France all-time top scorer?"},opts:[{ar:"هنري",en:"Henry"},{ar:"جيرو",en:"Giroud"},{ar:"تريزيغيه",en:"Trezeguet"},{ar:"بلاتيني",en:"Platini"}],ans:1},
+{q:{ar:"من هو هداف ألمانيا التاريخي؟",en:"Germany all-time top scorer?"},opts:[{ar:"مولر جيرد",en:"Gerd Müller"},{ar:"كلوزه",en:"Klose"},{ar:"رومينيغه",en:"Rummenigge"},{ar:"بودولسكي",en:"Podolski"}],ans:1},
+{q:{ar:"من هو هداف إيطاليا التاريخي؟",en:"Italy all-time top scorer?"},opts:[{ar:"روسي",en:"Rossi"},{ar:"ريفا",en:"Riva"},{ar:"ديل بييرو",en:"Del Piero"},{ar:"فييري",en:"Vieri"}],ans:1},
+{q:{ar:"من هو هداف إسبانيا التاريخي؟",en:"Spain all-time top scorer?"},opts:[{ar:"توريس",en:"Torres"},{ar:"فيا",en:"Villa"},{ar:"راؤول",en:"Raúl"},{ar:"موراتا",en:"Morata"}],ans:1},
+{q:{ar:"من هو هداف إنجلترا التاريخي؟",en:"England all-time top scorer?"},opts:[{ar:"روني",en:"Rooney"},{ar:"تشارلتون",en:"Charlton"},{ar:"كين",en:"Kane"},{ar:"لينيكر",en:"Lineker"}],ans:2},
+{q:{ar:"من هو هداف البرتغال التاريخي؟",en:"Portugal all-time top scorer?"},opts:[{ar:"يوسيبيو",en:"Eusébio"},{ar:"رونالدو",en:"Ronaldo"},{ar:"باوليتا",en:"Pauleta"},{ar:"فيغو",en:"Figo"}],ans:1},
+{q:{ar:"من فاز بدوري أبطال أوروبا 2004؟",en:"2004 UCL winner?"},opts:[{ar:"ميلان",en:"AC Milan"},{ar:"بورتو",en:"Porto"},{ar:"موناكو",en:"Monaco"},{ar:"تشيلسي",en:"Chelsea"}],ans:1},
+{q:{ar:"من فاز بدوري أبطال أوروبا 2005؟",en:"2005 UCL winner?"},opts:[{ar:"ميلان",en:"AC Milan"},{ar:"ليفربول",en:"Liverpool"},{ar:"ريال مدريد",en:"Real Madrid"},{ar:"برشلونة",en:"Barcelona"}],ans:1},
+{q:{ar:"من فاز بدوري أبطال أوروبا 2012؟",en:"2012 UCL winner?"},opts:[{ar:"بايرن",en:"Bayern"},{ar:"ريال مدريد",en:"Real Madrid"},{ar:"تشيلسي",en:"Chelsea"},{ar:"برشلونة",en:"Barcelona"}],ans:2},
+{q:{ar:"من فاز بدوري أبطال أوروبا 1999؟",en:"1999 UCL winner?"},opts:[{ar:"بايرن",en:"Bayern"},{ar:"مانشستر يونايتد",en:"Man United"},{ar:"ريال مدريد",en:"Real Madrid"},{ar:"يوفنتوس",en:"Juventus"}],ans:1},
+{q:{ar:"من فاز بدوري أبطال أوروبا 1993؟",en:"1993 UCL winner?"},opts:[{ar:"ميلان",en:"AC Milan"},{ar:"مارسيليا",en:"Marseille"},{ar:"ريال مدريد",en:"Real Madrid"},{ar:"بنفيكا",en:"Benfica"}],ans:1},
+{q:{ar:"من فاز بدوري أبطال أوروبا 2010؟",en:"2010 UCL winner?"},opts:[{ar:"بايرن",en:"Bayern"},{ar:"إنتر ميلان",en:"Inter"},{ar:"ريال مدريد",en:"Real Madrid"},{ar:"برشلونة",en:"Barcelona"}],ans:1},
+{q:{ar:"من فاز بدوري أبطال أوروبا 2023؟",en:"2023 UCL winner?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"إنتر",en:"Inter"},{ar:"مانشستر سيتي",en:"Man City"},{ar:"بايرن",en:"Bayern"}],ans:2},
+{q:{ar:"من فاز بالكرة الذهبية للسيدات 2024؟",en:"2024 Women's Ballon d'Or?"},opts:[{ar:"بونماتي",en:"Bonmatí"},{ar:"هانسن",en:"Hansen"},{ar:"بوتياس",en:"Putellas"},{ar:"سام كير",en:"Sam Kerr"}],ans:0},
+{q:{ar:"من فاز بالكرة الذهبية للسيدات 2025؟",en:"2025 Women's Ballon d'Or?"},opts:[{ar:"بونماتي",en:"Bonmatí"},{ar:"هانسن",en:"Hansen"},{ar:"بوتياس",en:"Putellas"},{ar:"كالدينتي",en:"Caldentey"}],ans:0},
+{q:{ar:"من فاز بكأس العالم للسيدات 2023؟",en:"2023 Women's World Cup winner?"},opts:[{ar:"الولايات المتحدة",en:"USA"},{ar:"إسبانيا",en:"Spain"},{ar:"إنجلترا",en:"England"},{ar:"ألمانيا",en:"Germany"}],ans:1},
+{q:{ar:"من فاز بكأس العالم للسيدات 2019؟",en:"2019 Women's World Cup winner?"},opts:[{ar:"الولايات المتحدة",en:"USA"},{ar:"هولندا",en:"Netherlands"},{ar:"إنجلترا",en:"England"},{ar:"ألمانيا",en:"Germany"}],ans:0},
+{q:{ar:"من فاز بكأس العالم للسيدات 2015؟",en:"2015 Women's World Cup winner?"},opts:[{ar:"اليابان",en:"Japan"},{ar:"الولايات المتحدة",en:"USA"},{ar:"ألمانيا",en:"Germany"},{ar:"إنجلترا",en:"England"}],ans:1},
+{q:{ar:"أكثر نادٍ فاز بدوري أبطال أوروبا للسيدات؟",en:"Club with most Women's UCL titles?"},opts:[{ar:"ليون",en:"Lyon"},{ar:"برشلونة",en:"Barcelona"},{ar:"فرانكفورت",en:"Frankfurt"},{ar:"باريس",en:"PSG"}],ans:0},
+{q:{ar:"من هو أغلى انتقال في التاريخ؟",en:"Most expensive transfer ever?"},opts:[{ar:"مبابي",en:"Mbappé"},{ar:"نيمار",en:"Neymar"},{ar:"بوغبا",en:"Pogba"},{ar:"رونالدو",en:"Ronaldo"}],ans:1},
+{q:{ar:"من هو أغلى مراهق في التاريخ؟",en:"Most expensive teenager ever?"},opts:[{ar:"مبابي",en:"Mbappé"},{ar:"جواو فيليكس",en:"João Félix"},{ar:"لامين يامال",en:"Lamine Yamal"},{ar:"بيلينغهام",en:"Bellingham"}],ans:0},
+{q:{ar:"من كان أول لاعب ينتقل مقابل 100 مليون يورو؟",en:"First €100M transfer?"},opts:[{ar:"رونالدو",en:"Ronaldo"},{ar:"بيل",en:"Bale"},{ar:"نيمار",en:"Neymar"},{ar:"بوغبا",en:"Pogba"}],ans:1},
+{q:{ar:"من هو اللاعب الأعلى أجراً حالياً؟",en:"Highest paid player currently?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"رونالدو",en:"Ronaldo"},{ar:"مبابي",en:"Mbappé"},{ar:"بنزيمة",en:"Benzema"}],ans:1},
+{q:{ar:"في أي سنة تأسس الاتحاد الدولي (FIFA)؟",en:"Year FIFA was founded?"},opts:[{ar:"1900",en:"1900"},{ar:"1904",en:"1904"},{ar:"1910",en:"1910"},{ar:"1918",en:"1918"}],ans:1},
+{q:{ar:"أين يقع مقر FIFA؟",en:"Where is FIFA headquartered?"},opts:[{ar:"باريس",en:"Paris"},{ar:"زيوريخ",en:"Zurich"},{ar:"لندن",en:"London"},{ar:"روما",en:"Rome"}],ans:1},
+{q:{ar:"في أي سنة تأسس الاتحاد الأوروبي (UEFA)؟",en:"Year UEFA was founded?"},opts:[{ar:"1950",en:"1950"},{ar:"1954",en:"1954"},{ar:"1958",en:"1958"},{ar:"1960",en:"1960"}],ans:1},
+{q:{ar:"أين يقع مقر UEFA؟",en:"Where is UEFA headquartered?"},opts:[{ar:"نيون",en:"Nyon"},{ar:"زيوريخ",en:"Zurich"},{ar:"بروكسل",en:"Brussels"},{ar:"أمستردام",en:"Amsterdam"}],ans:0},
+{q:{ar:"في أي سنة أقيم أول كأس عالم للسيدات؟",en:"First Women's World Cup year?"},opts:[{ar:"1985",en:"1985"},{ar:"1991",en:"1991"},{ar:"1995",en:"1995"},{ar:"1999",en:"1999"}],ans:1},
+{q:{ar:"من فاز بأول كأس عالم للسيدات؟",en:"First Women's WC winner?"},opts:[{ar:"النرويج",en:"Norway"},{ar:"الولايات المتحدة",en:"USA"},{ar:"ألمانيا",en:"Germany"},{ar:"الصين",en:"China"}],ans:1},
+{q:{ar:"في أي سنة أقيم أول كأس أوروبا للأندية؟",en:"First European Cup year?"},opts:[{ar:"1950",en:"1950"},{ar:"1955",en:"1955"},{ar:"1960",en:"1960"},{ar:"1965",en:"1965"}],ans:1},
+{q:{ar:"في أي سنة أُعيد تسمية كأس أوروبا إلى دوري الأبطال؟",en:"European Cup renamed to UCL in?"},opts:[{ar:"1988",en:"1988"},{ar:"1990",en:"1990"},{ar:"1992",en:"1992"},{ar:"1995",en:"1995"}],ans:2},
+{q:{ar:"في أي سنة أقيم أول كأس الاتحاد الأوروبي (الدوري الأوروبي حالياً)؟",en:"First UEFA Cup year?"},opts:[{ar:"1965",en:"1965"},{ar:"1971",en:"1971"},{ar:"1975",en:"1975"},{ar:"1980",en:"1980"}],ans:1},
+{q:{ar:"في أي سنة أقيم أول كأس عالم للأندية؟",en:"First Club World Cup year?"},opts:[{ar:"1995",en:"1995"},{ar:"2000",en:"2000"},{ar:"2005",en:"2005"},{ar:"2010",en:"2010"}],ans:1},
+{q:{ar:"من فاز بأول كأس عالم للأندية 2000؟",en:"First Club World Cup 2000 winner?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"كورينثيانز",en:"Corinthians"},{ar:"مانشستر يونايتد",en:"Man United"},{ar:"بالميراس",en:"Palmeiras"}],ans:1},
+{q:{ar:"أكثر نادٍ فاز بكأس العالم للأندية؟",en:"Club with most Club World Cups?"},opts:[{ar:"ريال مدريد",en:"Real Madrid"},{ar:"برشلونة",en:"Barcelona"},{ar:"بايرن",en:"Bayern"},{ar:"ميلان",en:"AC Milan"}],ans:0},
+{q:{ar:"في أي سنة ظهرت كرة القدم في الأولمبياد؟",en:"Football first appeared in Olympics in?"},opts:[{ar:"1896",en:"1896"},{ar:"1900",en:"1900"},{ar:"1908",en:"1908"},{ar:"1920",en:"1920"}],ans:1},
+{q:{ar:"من فاز بأول كرة قدم أولمبية؟",en:"First Olympic football winner?"},opts:[{ar:"فرنسا",en:"France"},{ar:"بريطانيا العظمى",en:"Great Britain"},{ar:"الدنمارك",en:"Denmark"},{ar:"بلجيكا",en:"Belgium"}],ans:1},
+{q:{ar:"في أي سنة ظهرت كرة القدم للسيدات في الأولمبياد؟",en:"Women's Olympic football first year?"},opts:[{ar:"1992",en:"1992"},{ar:"1996",en:"1996"},{ar:"2000",en:"2000"},{ar:"2004",en:"2004"}],ans:1},
+{q:{ar:"من فاز بأول أولمبياد للسيدات في كرة القدم؟",en:"First Women's Olympic football winner?"},opts:[{ar:"الولايات المتحدة",en:"USA"},{ar:"الصين",en:"China"},{ar:"النرويج",en:"Norway"},{ar:"ألمانيا",en:"Germany"}],ans:0},
+{q:{ar:"ما هو أقدم نادٍ لكرة القدم في العالم؟",en:"Oldest football club in the world?"},opts:[{ar:"شيفيلد",en:"Sheffield FC"},{ar:"نوتس كاونتي",en:"Notts County"},{ar:"ريال مدريد",en:"Real Madrid"},{ar:"غلاسكو رينجرز",en:"Rangers"}],ans:0},
+{q:{ar:"في أي سنوات فاز بيليه بكأس العالم؟",en:"Pelé's World Cup years?"},opts:[{ar:"1954,1958,1962",en:"1954,1958,1962"},{ar:"1958,1962,1970",en:"1958,1962,1970"},{ar:"1962,1966,1970",en:"1962,1966,1970"},{ar:"1958,1966,1970",en:"1958,1966,1970"}],ans:1},
+{q:{ar:"في أي سنة فاز مارادونا بكأس العالم؟",en:"Maradona's World Cup year?"},opts:[{ar:"1982",en:"1982"},{ar:"1986",en:"1986"},{ar:"1990",en:"1990"},{ar:"1994",en:"1994"}],ans:1},
+{q:{ar:"في أي سنة ضرب زيدان برأسه ماتيرازي؟",en:"Zidane headbutted Materazzi in?"},opts:[{ar:"2002",en:"2002"},{ar:"2006",en:"2006"},{ar:"2010",en:"2010"},{ar:"1998",en:"1998"}],ans:1},
+{q:{ar:"من فاز بنهائي 2006؟",en:"2006 final winner?"},opts:[{ar:"فرنسا",en:"France"},{ar:"إيطاليا",en:"Italy"},{ar:"ألمانيا",en:"Germany"},{ar:"البرتغال",en:"Portugal"}],ans:1},
+{q:{ar:"من فاز بنهائي 2002؟",en:"2002 final winner?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"ألمانيا",en:"Germany"},{ar:"تركيا",en:"Turkey"},{ar:"كوريا",en:"Korea"}],ans:0},
+{q:{ar:"من فاز بنهائي 1994؟",en:"1994 final winner?"},opts:[{ar:"إيطاليا",en:"Italy"},{ar:"البرازيل",en:"Brazil"},{ar:"ألمانيا",en:"Germany"},{ar:"السويد",en:"Sweden"}],ans:1},
+{q:{ar:"من فاز بنهائي 1990؟",en:"1990 final winner?"},opts:[{ar:"ألمانيا",en:"Germany"},{ar:"الأرجنتين",en:"Argentina"},{ar:"إيطاليا",en:"Italy"},{ar:"إنجلترا",en:"England"}],ans:0},
+{q:{ar:"من فاز بنهائي 1986؟",en:"1986 final winner?"},opts:[{ar:"الأرجنتين",en:"Argentina"},{ar:"ألمانيا",en:"Germany"},{ar:"البرازيل",en:"Brazil"},{ar:"فرنسا",en:"France"}],ans:0},
+{q:{ar:"من فاز بنهائي 1978؟",en:"1978 final winner?"},opts:[{ar:"هولندا",en:"Netherlands"},{ar:"الأرجنتين",en:"Argentina"},{ar:"ألمانيا",en:"Germany"},{ar:"إيطاليا",en:"Italy"}],ans:1},
+{q:{ar:"من فاز بنهائي 1974؟",en:"1974 final winner?"},opts:[{ar:"هولندا",en:"Netherlands"},{ar:"ألمانيا الغربية",en:"West Germany"},{ar:"البرازيل",en:"Brazil"},{ar:"بولندا",en:"Poland"}],ans:1},
+{q:{ar:"من فاز بنهائي 1970؟",en:"1970 final winner?"},opts:[{ar:"إيطاليا",en:"Italy"},{ar:"البرازيل",en:"Brazil"},{ar:"ألمانيا",en:"Germany"},{ar:"أوروغواي",en:"Uruguay"}],ans:1},
+{q:{ar:"من فاز بنهائي 1966؟",en:"1966 final winner?"},opts:[{ar:"إنجلترا",en:"England"},{ar:"ألمانيا",en:"Germany"},{ar:"البرتغال",en:"Portugal"},{ar:"الاتحاد السوفيتي",en:"Soviet Union"}],ans:0},
+{q:{ar:"من فاز بنهائي 1962؟",en:"1962 final winner?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"تشيكوسلوفاكيا",en:"Czechoslovakia"},{ar:"ألمانيا",en:"Germany"},{ar:"تشيلي",en:"Chile"}],ans:0},
+{q:{ar:"من فاز بنهائي 1958؟",en:"1958 final winner?"},opts:[{ar:"السويد",en:"Sweden"},{ar:"البرازيل",en:"Brazil"},{ar:"فرنسا",en:"France"},{ar:"ألمانيا",en:"Germany"}],ans:1},
+{q:{ar:"من فاز بنهائي 1954؟",en:"1954 final winner?"},opts:[{ar:"المجر",en:"Hungary"},{ar:"ألمانيا الغربية",en:"West Germany"},{ar:"أوروغواي",en:"Uruguay"},{ar:"النمسا",en:"Austria"}],ans:1},
+{q:{ar:"من فاز بمونديال 1938؟",en:"1938 World Cup winner?"},opts:[{ar:"إيطاليا",en:"Italy"},{ar:"المجر",en:"Hungary"},{ar:"البرازيل",en:"Brazil"},{ar:"فرنسا",en:"France"}],ans:0},
+{q:{ar:"من فاز بمونديال 1934؟",en:"1934 World Cup winner?"},opts:[{ar:"تشيكوسلوفاكيا",en:"Czechoslovakia"},{ar:"إيطاليا",en:"Italy"},{ar:"ألمانيا",en:"Germany"},{ar:"النمسا",en:"Austria"}],ans:1},
+{q:{ar:"من هو أكثر لاعب سجل أهدافاً في مسيرته؟",en:"Most career goals scorer?"},opts:[{ar:"بيليه",en:"Pelé"},{ar:"رونالدو",en:"Ronaldo"},{ar:"ميسي",en:"Messi"},{ar:"روماريو",en:"Romário"}],ans:1},
+{q:{ar:"من هو أكثر لاعب مشاركة في دوري الأبطال؟",en:"Most UCL appearances?"},opts:[{ar:"كاسياس",en:"Casillas"},{ar:"رونالدو",en:"Ronaldo"},{ar:"ميسي",en:"Messi"},{ar:"تشافي",en:"Xavi"}],ans:1},
+{q:{ar:"من هو هداف الدوري الإنجليزي التاريخي؟",en:"All-time PL top scorer?"},opts:[{ar:"روني",en:"Rooney"},{ar:"شيرر",en:"Shearer"},{ar:"هاري كين",en:"Harry Kane"},{ar:"هنري",en:"Henry"}],ans:1},
+{q:{ar:"من هو أكثر لاعب صناعة أهداف في الدوري الإنجليزي؟",en:"Most PL assists?"},opts:[{ar:"دي بروين",en:"De Bruyne"},{ar:"جيرارد",en:"Gerrard"},{ar:"لامبارد",en:"Lampard"},{ar:"فابرجاس",en:"Fàbregas"}],ans:0},
+{q:{ar:"من هو أكثر لاعب مشاركة في الدوري الإنجليزي؟",en:"Most PL appearances?"},opts:[{ar:"جيجز",en:"Giggs"},{ar:"لامبارد",en:"Lampard"},{ar:"باري",en:"Barry"},{ar:"ميلنر",en:"Milner"}],ans:2},
+{q:{ar:"كم مرة فاز ريال مدريد بدوري أبطال أوروبا حتى 2025؟",en:"Real Madrid UCL titles by 2025?"},opts:[{ar:"13",en:"13"},{ar:"14",en:"14"},{ar:"15",en:"15"},{ar:"16",en:"16"}],ans:2},
+{q:{ar:"من هو أكثر لاعب فاز بدوري أبطال أوروبا؟",en:"Player with most UCL titles?"},opts:[{ar:"رونالدو",en:"Ronaldo"},{ar:"ميسي",en:"Messi"},{ar:"مودريتش",en:"Modrić"},{ar:"راموس",en:"Ramos"}],ans:2},
+{q:{ar:"كم مرة فازت البرازيل بكأس العالم؟",en:"How many World Cups has Brazil won?"},opts:[{ar:"4",en:"4"},{ar:"5",en:"5"},{ar:"6",en:"6"},{ar:"7",en:"7"}],ans:1},
+{q:{ar:"كم مرة فازت إيطاليا بكأس العالم؟",en:"How many World Cups has Italy won?"},opts:[{ar:"3",en:"3"},{ar:"4",en:"4"},{ar:"5",en:"5"},{ar:"2",en:"2"}],ans:1},
+{q:{ar:"كم مرة فازت ألمانيا بكأس العالم؟",en:"How many World Cups has Germany won?"},opts:[{ar:"3",en:"3"},{ar:"4",en:"4"},{ar:"5",en:"5"},{ar:"6",en:"6"}],ans:1},
+{q:{ar:"كم مرة فازت الأرجنتين بكأس العالم؟",en:"How many World Cups has Argentina won?"},opts:[{ar:"2",en:"2"},{ar:"3",en:"3"},{ar:"4",en:"4"},{ar:"5",en:"5"}],ans:1},
+{q:{ar:"كم مرة فازت فرنسا بكأس العالم؟",en:"How many World Cups has France won?"},opts:[{ar:"1",en:"1"},{ar:"2",en:"2"},{ar:"3",en:"3"},{ar:"4",en:"4"}],ans:1},
+{q:{ar:"كم مرة فازت أوروغواي بكأس العالم؟",en:"How many World Cups has Uruguay won?"},opts:[{ar:"1",en:"1"},{ar:"2",en:"2"},{ar:"3",en:"3"},{ar:"4",en:"4"}],ans:1},
+{q:{ar:"كم مرة فازت إنجلترا بكأس العالم؟",en:"How many World Cups has England won?"},opts:[{ar:"1",en:"1"},{ar:"2",en:"2"},{ar:"3",en:"3"},{ar:"0",en:"0"}],ans:0},
+{q:{ar:"كم مرة فازت إسبانيا بكأس العالم؟",en:"How many World Cups has Spain won?"},opts:[{ar:"1",en:"1"},{ar:"2",en:"2"},{ar:"3",en:"3"},{ar:"0",en:"0"}],ans:0},
+{q:{ar:"من هو أول لاعب يسجل 100 هدف دولي؟",en:"First player to score 100 international goals?"},opts:[{ar:"بيليه",en:"Pelé"},{ar:"علي دائي",en:"Ali Daei"},{ar:"رونالدو",en:"Ronaldo"},{ar:"ميسي",en:"Messi"}],ans:1},
+{q:{ar:"من هو الهداف التاريخي للمنتخبات حالياً؟",en:"Current all-time international top scorer?"},opts:[{ar:"ميسي",en:"Messi"},{ar:"علي دائي",en:"Ali Daei"},{ar:"رونالدو",en:"Ronaldo"},{ar:"موكوكو",en:"Mokoko"}],ans:2},
+{q:{ar:"من هو أكثر لاعب مشاركة دولية؟",en:"Most international caps?"},opts:[{ar:"رونالدو",en:"Ronaldo"},{ar:"ميسي",en:"Messi"},{ar:"أحمد حسن",en:"Ahmed Hassan"},{ar:"كاسياس",en:"Casillas"}],ans:0},
+{q:{ar:"من فاز بكأس العرب 2021؟",en:"2021 Arab Cup winner?"},opts:[{ar:"مصر",en:"Egypt"},{ar:"الجزائر",en:"Algeria"},{ar:"المغرب",en:"Morocco"},{ar:"تونس",en:"Tunisia"}],ans:1},
+{q:{ar:"من فاز بكأس أفريقيا 2019؟",en:"AFCON 2019 winner?"},opts:[{ar:"السنغال",en:"Senegal"},{ar:"الجزائر",en:"Algeria"},{ar:"نيجيريا",en:"Nigeria"},{ar:"مصر",en:"Egypt"}],ans:1},
+{q:{ar:"من فاز بكأس أفريقيا 2021؟",en:"AFCON 2021 winner?"},opts:[{ar:"مصر",en:"Egypt"},{ar:"السنغال",en:"Senegal"},{ar:"الجزائر",en:"Algeria"},{ar:"المغرب",en:"Morocco"}],ans:1},
+{q:{ar:"من فاز بكأس آسيا 2023؟",en:"2023 Asian Cup winner?"},opts:[{ar:"اليابان",en:"Japan"},{ar:"قطر",en:"Qatar"},{ar:"كوريا",en:"Korea"},{ar:"إيران",en:"Iran"}],ans:1},
+{q:{ar:"من فاز بكوبا أمريكا 2021؟",en:"2021 Copa America winner?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"الأرجنتين",en:"Argentina"},{ar:"أوروغواي",en:"Uruguay"},{ar:"كولومبيا",en:"Colombia"}],ans:1},
+{q:{ar:"من فاز بكوبا أمريكا 2019؟",en:"2019 Copa America winner?"},opts:[{ar:"البرازيل",en:"Brazil"},{ar:"الأرجنتين",en:"Argentina"},{ar:"بيرو",en:"Peru"},{ar:"تشيلي",en:"Chile"}],ans:0},
+{q:{ar:"من فاز بكوبا أمريكا 2016؟",en:"2016 Copa America winner?"},opts:[{ar:"الأرجنتين",en:"Argentina"},{ar:"تشيلي",en:"Chile"},{ar:"البرازيل",en:"Brazil"},{ar:"كولومبيا",en:"Colombia"}],ans:1},
+{q:{ar:"من فاز بكوبا أمريكا 2015؟",en:"2015 Copa America winner?"},opts:[{ar:"تشيلي",en:"Chile"},{ar:"الأرجنتين",en:"Argentina"},{ar:"البرازيل",en:"Brazil"},{ar:"أوروغواي",en:"Uruguay"}],ans:0},
+{q:{ar:"ما هو أول فريق عربي وصل لنهائي كأس العالم للأندية؟",en:"First Arab team to reach Club World Cup final?"},opts:[{ar:"الأهلي",en:"Al Ahly"},{ar:"الترجي",en:"Espérance"},{ar:"الرجاء",en:"Raja"},{ar:"الهلال",en:"Al Hilal"}],ans:0},
+{q:{ar:"من هو أول فريق عربي فاز بكأس العالم للأندية؟",en:"First Arab team to win Club World Cup?"},opts:[{ar:"الأهلي",en:"Al Ahly"},{ar:"الهلال",en:"Al Hilal"},{ar:"الترجي",en:"Espérance"},{ar:"لم يفز أي فريق عربي",en:"None"}],ans:3},
+{q:{ar:"كم عدد المنتخبات العربية التي شاركت في مونديال 2022؟",en:"How many Arab teams played 2022 WC?"},opts:[{ar:"3",en:"3"},{ar:"4",en:"4"},{ar:"5",en:"5"},{ar:"6",en:"6"}],ans:1},
+{q:{ar:"أي منتخب عربي فاز على الأرجنتين في مونديال 2022؟",en:"Which Arab team beat Argentina in 2022 WC?"},opts:[{ar:"السعودية",en:"Saudi Arabia"},{ar:"المغرب",en:"Morocco"},{ar:"تونس",en:"Tunisia"},{ar:"قطر",en:"Qatar"}],ans:0},
+{q:{ar:"أي منتخب عربي وصل لنصف نهائي مونديال 2022؟",en:"Which Arab team reached 2022 WC semis?"},opts:[{ar:"السعودية",en:"Saudi"},{ar:"تونس",en:"Tunisia"},{ar:"المغرب",en:"Morocco"},{ar:"قطر",en:"Qatar"}],ans:2},
+{q:{ar:"من هو أول لاعب عربي يفوز بالدوري الإنجليزي؟",en:"First Arab to win the Premier League?"},opts:[{ar:"محرز",en:"Mahrez"},{ar:"صلاح",en:"Salah"},{ar:"بن عرفة",en:"Ben Arfa"},{ar:"زياش",en:"Ziyech"}],ans:0},
+{q:{ar:"من هو اللاعب العربي الأكثر تسجيلاً في تاريخ دوري الأبطال؟",en:"Top Arab UCL scorer in history?"},opts:[{ar:"صلاح",en:"Salah"},{ar:"محرز",en:"Mahrez"},{ar:"بنزيمة",en:"Benzema"},{ar:"حكيمي",en:"Hakimi"}],ans:0},
+{q:{ar:"من هو أول لاعب عربي يفوز بالدوري الإسباني؟",en:"First Arab to win La Liga?"},opts:[{ar:"بنزيمة (جزائري الأصل)",en:"Benzema (Algerian origin)"},{ar:"حكيمي",en:"Hakimi"},{ar:"زياش",en:"Ziyech"},{ar:"عمورة",en:"Amoura"}],ans:0}
+]
+};
+
+/* ============ STATE ============ */
+let state={coins:10,currentLevel:'easy',currentQuestionIndex:0,lives:3,soundEnabled:true,musicEnabled:true,lang:'ar',theme:'galaxy',questions:[],answeredCorrectly:0};
+
+/* ============ DOM ============ */
+const $=s=>document.querySelector(s);const $$=s=>document.querySelectorAll(s);
+
+/* ============ TRANSLATIONS ============ */
+const translations={ar:{subtitle:"تحدي كرة القدم",play:"ابدأ اللعب",dailyChallenge:"التحدي اليومي",by:"by Ayoube BR",chooseLevel:"اختر المستوى",easy:"سهل",medium:"متوسط",hard:"صعب",easyDesc:"أسئلة متنوعة للمبتدئين",mediumDesc:"تحدي لعشاق كرة القدم",hardDesc:"للخبراء فقط",hint:"تلميح",fifty:"حذف حرفين",skip:"تخطي",congrats:"أحسنت!",continue:"متابعة",settings:"الإعدادات",language:"اللغة",theme:"السمة",sound:"الصوت",music:"الموسيقى",about:"حول التطبيق",share:"مشاركة التطبيق",reset:"إعادة اللعب",resetBtn:"تصفير",noCoins:"لا تملك عملات كافية!",levelComplete:"لقد أكملت المستوى!",gameOver:"انتهت المحاولات!",dailyDone:"لقد أكملت التحدي اليومي بالفعل!",dailyReward:"لقد ربحت عملة واحدة!",dailyQuestion:"سؤال اليوم",exitGame:"هل تريد الخروج من اللعبة؟ سيتم فقدان تقدمك الحالي.",exitYes:"نعم، خروج",exitNo:"لا، متابعة"},en:{subtitle:"Football Challenge",play:"Start Playing",dailyChallenge:"Daily Challenge",by:"by Ayoube BR",chooseLevel:"Choose Level",easy:"Easy",medium:"Medium",hard:"Hard",easyDesc:"Varied questions for beginners",mediumDesc:"A challenge for football fans",hardDesc:"For experts only",hint:"Hint",fifty:"50/50",skip:"Skip",congrats:"Well Done!",continue:"Continue",settings:"Settings",language:"Language",theme:"Theme",sound:"Sound",music:"Music",about:"About App",share:"Share App",reset:"Reset Game",resetBtn:"Reset",noCoins:"Not enough coins!",levelComplete:"Level Complete!",gameOver:"Game Over!",dailyDone:"You've already completed today's challenge!",dailyReward:"You earned 1 coin!",dailyQuestion:"Today's Question",exitGame:"Do you want to exit? Your progress will be lost.",exitYes:"Yes, exit",exitNo:"No, continue"}};
+function t(k){return translations[state.lang][k]||k}
+
+/* ============ AUDIO ============ */
+let audioCtx=null;
+function initAudio(){if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}}
+function playTone(f,d,ty='sine',v=.3){if(!state.soundEnabled)return;initAudio();if(!audioCtx)return;try{const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+d);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}catch(e){}}
+function playCorrect(){playTone(523.25,.15,'sine',.4);setTimeout(()=>playTone(659.25,.15,'sine',.4),100);setTimeout(()=>playTone(783.99,.3,'sine',.4),200)}
+function playWrong(){playTone(200,.3,'sawtooth',.3);setTimeout(()=>playTone(150,.4,'sawtooth',.3),150)}
+function playClick(){playTone(800,.05,'square',.1)}
+function playCoin(){playTone(1200,.08,'sine',.3);setTimeout(()=>playTone(1600,.15,'sine',.3),80)}
+let musicInterval=null;
+function startMusic(){if(!state.musicEnabled)return;stopMusic();initAudio();const n=[261.63,329.63,392.00,523.25];let i=0;musicInterval=setInterval(()=>{if(!state.musicEnabled)return;playTone(n[i%n.length],.4,'sine',.08);i++},600)}
+function stopMusic(){if(musicInterval){clearInterval(musicInterval);musicInterval=null}}
+
+/* ============ COINS ============ */
+function updateCoins(a){state.coins+=a;if(state.coins<0)state.coins=0;$('#coin-count').textContent=state.coins;localStorage.setItem('footq_coins',state.coins);if(a>0){playCoin();showCoinFly()}}
+function showCoinFly(){const el=document.createElement('div');el.className='coin-fly';el.textContent='+1';el.style.left='50%';el.style.top='50%';document.body.appendChild(el);setTimeout(()=>el.remove(),1000)}
+
+/* ============ DAILY LOGIN ============ */
+function checkDailyLogin(){const today=new Date().toDateString();const last=localStorage.getItem('footq_last_login');if(last!==today){updateCoins(2);localStorage.setItem('footq_last_login',today)}}
+
+/* ============ LOAD ============ */
+function loadState(){
+  const sc=localStorage.getItem('footq_coins');if(sc!==null)state.coins=parseInt(sc);
+  const th=localStorage.getItem('footq_theme');if(th)state.theme=th;
+  const lg=localStorage.getItem('footq_lang');if(lg)state.lang=lg;
+  const sd=localStorage.getItem('footq_sound');if(sd!==null)state.soundEnabled=sd==='true';
+  const ms=localStorage.getItem('footq_music');if(ms!==null)state.musicEnabled=ms==='true';
+  document.body.dataset.theme=state.theme;document.body.dataset.lang=state.lang;document.documentElement.lang=state.lang;document.documentElement.dir=state.lang==='ar'?'rtl':'ltr';
+  $('#coin-count').textContent=state.coins;
+  $$('.theme-dot').forEach(d=>d.classList.toggle('active',d.dataset.theme===state.theme));
+  $$('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===state.lang));
+  $('#sound-toggle').classList.toggle('active',state.soundEnabled);
+  $('#music-toggle').classList.toggle('active',state.musicEnabled);
+  updateUILanguage();
+  if(state.musicEnabled)startMusic();
+}
+function updateUILanguage(){
+  $$('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(translations[state.lang][k])el.textContent=translations[state.lang][k]});
+  if($('#game-screen').classList.contains('active'))renderQuestion();
+  updateAboutShareText();
+}
+function showScreen(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active')}
+
+/* ============ START LEVEL ============ */
+function startLevel(lv){state.currentLevel=lv;state.questions=[...QUESTIONS[lv]].sort(()=>Math.random()-.5);state.currentQuestionIndex=0;state.lives=3;state.answeredCorrectly=0;showScreen('game-screen');renderQuestion()}
+
+/* ============ RENDER QUESTION ============ */
+function renderQuestion(){
+  const q=state.questions[state.currentQuestionIndex];
+  if(!q){endLevel(true);return}
+  $('#question-text').textContent=q.q[state.lang];
+  const tot=state.questions.length,cur=state.currentQuestionIndex+1;
+  $('#question-progress').textContent=`${cur} / ${tot}`;
+  $('#progress-fill').style.width=`${(cur/tot)*100}%`;
+  const grid=$('#options-grid');grid.innerHTML='';
+  q.opts.forEach((opt,idx)=>{const btn=document.createElement('button');btn.className='option-btn';btn.textContent=opt[state.lang];btn.dataset.index=idx;btn.addEventListener('click',()=>handleAnswer(idx,btn));grid.appendChild(btn)});
+  renderLives()
+}
+function renderLives(){const c=$('#lives-display');c.innerHTML='';for(let i=0;i<3;i++){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 24 24');s.classList.add('life-icon');if(i>=state.lives)s.classList.add('lost');s.innerHTML='<path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>';c.appendChild(s)}}
+
+/* ============ HANDLE ANSWER ============ */
+function handleAnswer(sel,btn){
+  const q=state.questions[state.currentQuestionIndex];
+  $$('.option-btn').forEach(b=>b.classList.add('disabled'));
+  if(sel===q.ans){
+    btn.classList.add('correct');playCorrect();state.answeredCorrectly++;
+    if(state.answeredCorrectly%5===0)updateCoins(1);
+    setTimeout(()=>nextQuestion(),1000)
+  }else{
+    btn.classList.add('wrong');playWrong();state.lives--;renderLives();
+    const correctBtns=$$('.option-btn');if(correctBtns[q.ans])correctBtns[q.ans].classList.add('correct');
+    if(state.lives<=0){
+      setTimeout(()=>{state.currentQuestionIndex=Math.max(0,state.currentQuestionIndex-3);state.lives=3;renderLives();renderQuestion()},1500)
+    }else{
+      setTimeout(()=>nextQuestion(),1500)
+    }
+  }
+}
+function nextQuestion(){state.currentQuestionIndex++;if(state.currentQuestionIndex>=state.questions.length)endLevel(true);else renderQuestion()}
+function endLevel(win){$('#result-stats').textContent=win?t('levelComplete')+` (${state.answeredCorrectly} ${state.lang==='ar'?'إجابة صحيحة':'correct'})`:t('gameOver');showScreen('result-screen')}
+
+/* ============ HELPERS ============ */
+function useHint(){if(state.coins<5){alert(t('noCoins'));return}const q=state.questions[state.currentQuestionIndex];if(!q)return;updateCoins(-5);const ca=q.opts[q.ans][state.lang];alert(`${t('hint')}: ${ca.charAt(0)}...`);playClick()}
+function useFifty(){if(state.coins<5){alert(t('noCoins'));return}updateCoins(-5);const q=state.questions[state.currentQuestionIndex];if(!q)return;const wi=[];q.opts.forEach((_,i)=>{if(i!==q.ans)wi.push(i)});wi.sort(()=>Math.random()-.5);const rm=wi.slice(0,2);$$('.option-btn').forEach((b,i)=>{if(rm.includes(i))b.classList.add('disabled')});playClick()}
+function useSkip(){if(state.coins<10){alert(t('noCoins'));return}updateCoins(-10);nextQuestion();playClick()}
+
+/* ============ DAILY ============ */
+function loadDailyChallenge(){
+  const today=new Date().toDateString();const last=localStorage.getItem('footq_last_daily');
+  const done=(last===today);
+  const c=$('#daily-content');
+  if(done){c.innerHTML=`<p style="font-size:1.2rem;color:var(--text-secondary)">${t('dailyDone')}</p>`;return}
+  const dq=QUESTIONS.hard[Math.floor(Math.random()*QUESTIONS.hard.length)];
+  c.innerHTML=`<h3 style="margin-bottom:20px">${t('dailyQuestion')}</h3><div class="question-card" style="min-height:100px"><p class="question-text">${dq.q[state.lang]}</p></div><div class="options-grid" id="daily-options"></div>`;
+  const g=$('#daily-options');
+  dq.opts.forEach((opt,idx)=>{const b=document.createElement('button');b.className='option-btn';b.textContent=opt[state.lang];b.addEventListener('click',()=>{if(idx===dq.ans){updateCoins(1);playCorrect();localStorage.setItem('footq_last_daily',today);c.innerHTML=`<p style="font-size:1.5rem;color:var(--success)">${t('dailyReward')}</p>`}else{playWrong();b.classList.add('wrong')}});g.appendChild(b)})
+}
+
+/* ============ UPDATE ABOUT/SHARE TEXT (i18n) ============ */
+function updateAboutShareText(){
+  if(state.lang==='ar'){
+    $('#about-description').textContent="لعبة الأسئلة الأكثر احترافية عن كرة القدم. اختبر معرفتك عبر 210 سؤال متنوع بين السهل والمتوسط والصعب، وتحدَّ أصدقاءك في التحدي اليومي!";
+    $('#feat1').textContent='210 سؤال';$('#feat2').textContent='3 مستويات';$('#feat3').textContent='تحدي يومي';
+    $('#credit-text').textContent='تطوير';$('#about-close-text').textContent='إغلاق';
+    $('#share-title').textContent='شارك FOOTQ';
+    $('#share-desc').textContent='تحدَّ أصدقاءك في لعبة الأسئلة الأكثر احترافية عن كرة القدم! شارك FOOTQ الآن واجعلهم ينضمون إلى التحدي.';
+    $('#share-text-box').innerHTML='⚽ FOOTQ - تحدي كرة القدم<br>🏆 210 سؤال • 3 مستويات • تحدٍّ يومي<br>by Ayoube BR<button class="share-copy-btn" id="copy-share-btn">نسخ</button>';
+    $('#share-close-text').textContent='إغلاق';
+  }else{
+    $('#about-description').textContent="The most professional football quiz game. Test your knowledge with 210 questions across easy, medium and hard levels, and challenge your friends in the Daily Challenge!";
+    $('#feat1').textContent='210 Questions';$('#feat2').textContent='3 Levels';$('#feat3').textContent='Daily Challenge';
+    $('#credit-text').textContent='Developed by';$('#about-close-text').textContent='Close';
+    $('#share-title').textContent='Share FOOTQ';
+    $('#share-desc').textContent='Challenge your friends with the most professional football quiz game! Share FOOTQ now and get them to join the challenge.';
+    $('#share-text-box').innerHTML='⚽ FOOTQ - Football Quiz<br>🏆 210 Questions • 3 Levels • Daily Challenge<br>by Ayoube BR<button class="share-copy-btn" id="copy-share-btn">Copy</button>';
+    $('#share-close-text').textContent='Close';
+  }
+  // re-bind copy button
+  const cb=document.getElementById('copy-share-btn');
+  if(cb){cb.addEventListener('click',()=>{
+    const txt=state.lang==='ar'?'⚽ FOOTQ - تحدي كرة القدم\n🏆 210 سؤال • 3 مستويات • تحدٍّ يومي\nby Ayoube BR':'⚽ FOOTQ - Football Quiz\n🏆 210 Questions • 3 Levels • Daily Challenge\nby Ayoube BR';
+    if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>{cb.textContent=state.lang==='ar'?'✓ تم':'✓ Done';setTimeout(()=>{cb.textContent=state.lang==='ar'?'نسخ':'Copy'},1500)})}
+    else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();cb.textContent=state.lang==='ar'?'✓ تم':'✓ Done';setTimeout(()=>{cb.textContent=state.lang==='ar'?'نسخ':'Copy'},1500)}
+  })}
+}
+
+/* ============ SHARE ACTIONS ============ */
+function shareTo(platform){
+  const txt=state.lang==='ar'?'⚽ FOOTQ - تحدي كرة القدم 🏆 210 سؤال • 3 مستويات • تحدٍّ يومي - by Ayoube BR':'⚽ FOOTQ - Football Quiz 🏆 210 Questions • 3 Levels • Daily Challenge - by Ayoube BR';
+  const url=window.location.href;
+  const urls={
+    whatsapp:`https://wa.me/?text=${encodeURIComponent(txt+' '+url)}`,
+    facebook:`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}"e=${encodeURIComponent(txt)}`,
+    twitter:`https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(url)}`,
+    telegram:`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(txt)}`
+  };
+  if(navigator.share){
+    navigator.share({title:'FOOTQ',text:txt,url:url}).catch(()=>{window.open(urls[platform],'_blank')});
+  }else{
+    window.open(urls[platform],'_blank');
+  }
+}
+
+/* ============ EVENTS ============ */
+document.addEventListener('DOMContentLoaded',()=>{
+  loadState();checkDailyLogin();
+  $('#play-btn').addEventListener('click',()=>{playClick();showScreen('level-screen')});
+  $('#level-back-btn').addEventListener('click',()=>{playClick();showScreen('home-screen')});
+  $('#daily-btn').addEventListener('click',()=>{playClick();showScreen('daily-screen');loadDailyChallenge()});
+  $('#daily-back-btn').addEventListener('click',()=>{playClick();showScreen('home-screen')});
+  $$('.level-card').forEach(c=>c.addEventListener('click',()=>{playClick();startLevel(c.dataset.level)}));
+  
+  // ===== Game back button =====
+  $('#game-back-btn').addEventListener('click',()=>{
+    playClick();
+    if(confirm(t('exitGame'))){showScreen('level-screen')}
+  });
+  
+  $('#settings-btn').addEventListener('click',()=>{playClick();$('#settings-modal').classList.add('active')});
+  $('#close-settings').addEventListener('click',()=>{playClick();$('#settings-modal').classList.remove('active')});
+  
+  $$('.lang-btn').forEach(b=>b.addEventListener('click',()=>{state.lang=b.dataset.lang;document.body.dataset.lang=state.lang;document.documentElement.lang=state.lang;document.documentElement.dir=state.lang==='ar'?'rtl':'ltr';localStorage.setItem('footq_lang',state.lang);$$('.lang-btn').forEach(x=>x.classList.toggle('active',x.dataset.lang===state.lang));updateUILanguage();playClick()}));
+  $$('.theme-dot').forEach(d=>d.addEventListener('click',()=>{state.theme=d.dataset.theme;document.body.dataset.theme=state.theme;localStorage.setItem('footq_theme',state.theme);$$('.theme-dot').forEach(x=>x.classList.toggle('active',x.dataset.theme===state.theme));playClick()}));
+  $('#sound-toggle').addEventListener('click',()=>{state.soundEnabled=!state.soundEnabled;$('#sound-toggle').classList.toggle('active',state.soundEnabled);localStorage.setItem('footq_sound',state.soundEnabled);if(state.soundEnabled)playClick()});
+  $('#music-toggle').addEventListener('click',()=>{state.musicEnabled=!state.musicEnabled;$('#music-toggle').classList.toggle('active',state.musicEnabled);localStorage.setItem('footq_music',state.musicEnabled);if(state.musicEnabled)startMusic();else stopMusic();playClick()});
+  $('#reset-btn').addEventListener('click',()=>{if(confirm(state.lang==='ar'?'هل أنت متأكد من تصفير كل شيء؟':'Are you sure you want to reset everything?')){localStorage.clear();location.reload()}});
+  
+  // ===== About modal =====
+  $('#about-btn').addEventListener('click',()=>{playClick();$('#about-modal').classList.add('active')});
+  $('#about-close-btn').addEventListener('click',()=>{playClick();$('#about-modal').classList.remove('active')});
+  
+  // ===== Share modal =====
+  $('#share-btn').addEventListener('click',()=>{playClick();$('#share-modal').classList.add('active')});
+  $('#share-close-btn').addEventListener('click',()=>{playClick();$('#share-modal').classList.remove('active')});
+  $$('.share-opt').forEach(b=>b.addEventListener('click',()=>{playClick();shareTo(b.dataset.share)}));
+  
+  $('#hint-btn').addEventListener('click',useHint);
+  $('#fifty-btn').addEventListener('click',useFifty);
+  $('#skip-btn').addEventListener('click',useSkip);
+  $('#result-continue-btn').addEventListener('click',()=>{playClick();showScreen('level-screen')});
+  document.body.addEventListener('click',function im(){if(state.musicEnabled)startMusic();document.body.removeEventListener('click',im)},{once:true});
+  
+  // إغلاق النوافذ بالنقر على الخلفية
+  $$('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('active')}));
+  
+  // init about/share text
+  updateAboutShareText();
+});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+</script>
+</body>
+</html>
